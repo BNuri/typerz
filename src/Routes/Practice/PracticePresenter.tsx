@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import Timer from "../../Components/Timer";
+import Speed from "../../Components/Speed";
+import Accuracy from "../../Components/Accuracy";
 
 const Container = styled.div`
   font-size: 20px;
@@ -63,6 +65,8 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   changeHandler
 }) => (
   <Container>
+    <Speed time={time} typeCnt={typeCnt} typeWrong={typeWrong} />
+    <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
     <Timer time={time} />
     <Title>{result.title}</Title>
     <Writer>{result.writer}</Writer>
@@ -88,6 +92,7 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
             onChange={changeHandler}
             ref={ref => (refs[index] = ref!)}
             autoFocus={index === 0 ? true : false}
+            spellCheck="false"
           ></Input>
         </Quote>
       ))}
