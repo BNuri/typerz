@@ -1,5 +1,6 @@
-import React, { ReactSVG } from "react";
+import React from "react";
 import styled from "styled-components";
+import Timer from "../../Components/Timer";
 
 const Container = styled.div`
   font-size: 20px;
@@ -40,28 +41,29 @@ interface IPractice {
   typeCnt: number;
   typeWrong: number[];
   pageNum: number;
-  isTest: boolean;
+  time: number;
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
+  refs: HTMLInputElement[];
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  refs: HTMLInputElement[];
 }
 
 const PracticePresenter: React.FunctionComponent<IPractice> = ({
   typeCnt,
   typeWrong,
   pageNum,
-  isTest,
+  time,
   result,
   displayQuotes,
+  refs,
   keyDownHandler,
   keyUpHandler,
-  changeHandler,
-  refs
+  changeHandler
 }) => (
   <Container>
+    <Timer time={time} />
     <Title>{result.title}</Title>
     <Writer>{result.writer}</Writer>
     <Quotes>

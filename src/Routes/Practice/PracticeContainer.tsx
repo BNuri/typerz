@@ -54,6 +54,7 @@ interface IState {
   currentLength: number;
   pageNum: number;
   isTest: boolean;
+  time: number;
   timer: number;
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
@@ -73,6 +74,7 @@ class PracticeContainer extends Component<IProps, IState> {
       currentLength: 0,
       pageNum: 0,
       isTest: pathname.includes("/test/"),
+      time: 0,
       timer: 0,
       result: { title: "", writer: "", quote: [] },
       displayQuotes: [],
@@ -93,6 +95,9 @@ class PracticeContainer extends Component<IProps, IState> {
       return push("/");
     }
     let result = null;
+    if (isTest) {
+      this.setState({ time: 300 });
+    }
     try {
       ({ data: result } = await quoteApi.getQuote(id));
       const { quote } = result;
@@ -107,6 +112,10 @@ class PracticeContainer extends Component<IProps, IState> {
     }
   }
 
+  componentWillUnmount() {
+    this.stopTimer();
+  }
+
   splitByLength = (quote: string) => {
     let length = quote.length;
     let cnt = length / 40;
@@ -119,9 +128,9 @@ class PracticeContainer extends Component<IProps, IState> {
   };
 
   splitQuote = (quote: string) => {
-    const re = /(\r\n|\n|\r)/gm;
-    let quoteArr: string[] = quote.split(re);
-    quoteArr = quoteArr.filter(quote => !quote.match(re));
+    const RE = /(\r\n|\n|\r)/gm;
+    let quoteArr: string[] = quote.split(RE);
+    quoteArr = quoteArr.filter(quote => !quote.match(RE));
     let resultArr: string[] = [];
     quoteArr.forEach(q => {
       if (q.length > 40) {
@@ -151,20 +160,21 @@ class PracticeContainer extends Component<IProps, IState> {
       isTest,
       result,
       displayQuotes,
-      refs
+      refs,
+      time
     } = this.state;
     return (
       <PracticePresenter
         typeCnt={typeCnt}
         typeWrong={typeWrong}
         pageNum={pageNum}
-        isTest={isTest}
         result={result}
         displayQuotes={displayQuotes}
+        refs={refs}
+        time={time}
         keyDownHandler={this.keyDownHandler}
         keyUpHandler={this.keyUpHandler}
         changeHandler={this.changeHandler}
-        refs={refs}
       />
     );
   }
@@ -197,6 +207,19 @@ class PracticeContainer extends Component<IProps, IState> {
     }
   };
 
+  createTimer() {
+    const timerId = setInterval(() => {
+      this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
+    }, 1000);
+    this.setState({
+      timer: timerId
+    });
+  }
+
+  stopTimer() {
+    clearInterval(this.state.timer);
+  }
+
   keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.defaultPrevented) {
       return;
@@ -212,6 +235,7 @@ class PracticeContainer extends Component<IProps, IState> {
     if (this.state.timer === 0) {
       //timer 시작
       //종료 타이밍은
+      this.createTimer();
     }
   };
 
@@ -252,13 +276,12 @@ class PracticeContainer extends Component<IProps, IState> {
 
   //오타 탐지
   isWrong = (value: string, compareLength: number, comSpan?: Element) => {
-    if (!comSpan) {
-      return;
-    }
-    const stroke = this.getStroke(value[compareLength]);
+    if (!comSpan) return;
     const userChar = value[compareLength];
-    const comClass = comSpan?.className;
-    const comChar = comSpan?.textContent;
+    const comClass = comSpan.className;
+    const comChar = comSpan.textContent;
+    if (!comChar) return;
+    const stroke = this.getStroke(comChar);
     if (comChar !== userChar && !comClass?.includes("wrong")) {
       this.setState({ typeWrong: [...this.state.typeWrong, stroke] });
       comSpan?.classList.add("wrong");
@@ -276,9 +299,13 @@ class PracticeContainer extends Component<IProps, IState> {
     this.state.refs.map(ref => (ref.value = ""));
     this.state.refs[0].focus();
     this.setState({ inputIndex: 0 });
+    document
+      .querySelectorAll(".wrong")
+      .forEach(span => span.classList.remove("wrong"));
   };
 
-  getStroke = (kor: string) => {
+  getStroke = (kor?: string) => {
+    if (!kor) return 0;
     const uni: number = kor.charCodeAt(0);
     const GA = 44032;
     const NEJA = [2, 3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18, 20];

@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Fonts from "./assets/fonts";
+import theme from "./theme";
 
 const globalStyle = createGlobalStyle`
     ${reset}
@@ -16,6 +17,9 @@ const globalStyle = createGlobalStyle`
     }
     html, body, pre, code, kbd, samp {
         font-family: 'DungGeunMo';
+    }
+    body, input {
+        background-color: ${theme.greyColor};
     }
     a{
         text-decoration: none;

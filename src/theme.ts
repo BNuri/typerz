@@ -1,3 +1,3 @@
 export default {
-  blueColor: "red"
+  greyColor: "#B4B3B4"
 };
