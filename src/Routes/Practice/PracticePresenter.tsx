@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Timer from "../../Components/Timer";
 import Speed from "../../Components/Speed";
 import Accuracy from "../../Components/Accuracy";
+import ModalPortal from "../../Components/ModalPortal";
+import Modal from "../../Components/Modal";
 
 const Container = styled.div`
   font-size: 20px;
@@ -12,9 +14,9 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h3``;
+const Title = styled.h1``;
 
-const Writer = styled.h5``;
+const Writer = styled.h2``;
 
 const Quotes = styled.div`
   width: 800px;
@@ -39,33 +41,48 @@ const Input = styled.input`
   border: none;
 `;
 
+const Page = styled.span``;
+
 interface IPractice {
   typeCnt: number;
   typeWrong: number[];
+  isTest: boolean;
   pageNum: number;
+  pageTotal: number;
   time: number;
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
   refs: HTMLInputElement[];
+  modal: boolean;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  closeModal: () => void;
 }
 
 const PracticePresenter: React.FunctionComponent<IPractice> = ({
   typeCnt,
   typeWrong,
   pageNum,
+  pageTotal,
+  isTest,
   time,
   result,
   displayQuotes,
   refs,
+  modal,
   keyDownHandler,
   keyUpHandler,
-  changeHandler
+  changeHandler,
+  closeModal
 }) => (
   <Container>
-    <Speed time={time} typeCnt={typeCnt} typeWrong={typeWrong} />
+    <Speed
+      isTest={isTest}
+      time={time}
+      typeCnt={typeCnt}
+      typeWrong={typeWrong}
+    />
     <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
     <Timer time={time} />
     <Title>{result.title}</Title>
@@ -97,6 +114,20 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
         </Quote>
       ))}
     </Quotes>
+    <Page>
+      {pageNum} / {pageTotal}
+    </Page>
+    {modal && (
+      <ModalPortal>
+        <Modal
+          closeModal={closeModal}
+          isTest={isTest}
+          time={time}
+          typeCnt={typeCnt}
+          typeWrong={typeWrong}
+        />
+      </ModalPortal>
+    )}
   </Container>
 );
 

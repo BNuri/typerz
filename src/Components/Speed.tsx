@@ -4,16 +4,17 @@ import styled from "styled-components";
 const Container = styled.div``;
 
 const Speed: React.FunctionComponent<{
+  isTest: boolean;
   time: number;
   typeCnt: number;
   typeWrong: number[];
-}> = ({ time, typeCnt, typeWrong }) => (
+}> = ({ isTest, time, typeCnt, typeWrong }) => (
   <Container>
-    타수:
-    {time > 0
+    타수:{" "}
+    {(isTest ? 300 - time : time) > 0
       ? Math.floor(
           (typeCnt - typeWrong.reduce((first, next) => first + next, 0)) /
-            (time / 60)
+            ((isTest ? 300 - time : time) / 60)
         )
       : 0}
   </Container>

@@ -11,7 +11,6 @@ const PREVENT_KEYS = [
   20,
   21,
   25,
-  27,
   33,
   34,
   35,
@@ -27,9 +26,10 @@ const PREVENT_KEYS = [
 ];
 const NO_COUNT_KEYS = [
   8,
-  // 13,
+  13,
   16,
-  // 32,
+  27,
+  32,
   93,
   112,
   113,
@@ -55,6 +55,8 @@ interface IState {
   currentLength: number;
   currentQuote: string;
   pageNum: number;
+  pageTotal: number;
+  endQuoteIndex: number;
   isTest: boolean;
   time: number;
   timer: number;
@@ -62,6 +64,7 @@ interface IState {
   displayQuotes: string[];
   refs: HTMLInputElement[];
   inputIndex: number;
+  modal: boolean;
 }
 
 class PracticeContainer extends Component<IProps, IState> {
@@ -76,13 +79,16 @@ class PracticeContainer extends Component<IProps, IState> {
       currentLength: 0,
       currentQuote: "",
       pageNum: 0,
+      pageTotal: 0,
+      endQuoteIndex: 0,
       isTest: pathname.includes("/test/"),
       time: 0,
       timer: 0,
       result: { title: "", writer: "", quote: [] },
       displayQuotes: [],
       refs: [],
-      inputIndex: 0
+      inputIndex: 0,
+      modal: false
     };
   }
 
@@ -97,7 +103,9 @@ class PracticeContainer extends Component<IProps, IState> {
     if (id.isNull) {
       return push("/");
     }
-    let result = null;
+    let result = null,
+      pageTotal = 0,
+      endQuoteIndex = 0;
     if (isTest) {
       this.setState({ time: 300 });
     }
@@ -107,10 +115,16 @@ class PracticeContainer extends Component<IProps, IState> {
       const quoteArr = this.splitQuote(quote);
       quoteArr.unshift(result.title, result.writer);
       result.quote = quoteArr;
+      pageTotal = Math.ceil(quoteArr.length / 5);
+      endQuoteIndex = (quoteArr.length % 5) - 1 < 0 ? 4 : quoteArr.length % 5;
     } catch (error) {
       console.warn(error);
     } finally {
-      this.setState({ result });
+      this.setState({
+        result,
+        pageTotal,
+        endQuoteIndex
+      });
       this.sliceDisplayQuotes();
     }
   }
@@ -159,63 +173,59 @@ class PracticeContainer extends Component<IProps, IState> {
     const {
       typeCnt,
       typeWrong,
+      isTest,
       pageNum,
+      pageTotal,
       result,
       displayQuotes,
       refs,
-      time
+      time,
+      modal
     } = this.state;
     return (
       <PracticePresenter
         typeCnt={typeCnt}
         typeWrong={typeWrong}
+        isTest={isTest}
         pageNum={pageNum}
+        pageTotal={pageTotal}
         result={result}
         displayQuotes={displayQuotes}
         refs={refs}
         time={time}
+        modal={modal}
         keyDownHandler={this.keyDownHandler}
         keyUpHandler={this.keyUpHandler}
         changeHandler={this.changeHandler}
+        closeModal={this.closeModal}
       />
     );
   }
 
   keyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // if (event.defaultPrevented) {
-    //   return;
-    // }
-    // if (PREVENT_KEYS.includes(event.keyCode)) {
-    //   event.preventDefault();
-    //   return;
-    // } else if (!NO_COUNT_KEYS.includes(event.keyCode)) {
-    //   this.setState({ typeCnt: this.state.typeCnt + 1 });
-    // }
-    // if (this.state.timer === 0) {
-    //   //timer 시작
-    //   //종료 타이밍은
-    //   //this.createTimer();
-    // }
-    // enter는 글 length와 같을때만 입력가능.
-    console.log(event.keyCode);
+    // enter, 스페이스는 글 length와 같을때만 입력가능.
+    if (event.defaultPrevented) {
+      return;
+    }
     if (event.keyCode === 13 || event.keyCode === 32) {
-      console.log(event.keyCode);
-      const { maxLength, value } = event.currentTarget;
-      console.log(maxLength, value.length, value);
-      console.log(maxLength, this.state.currentLength);
-      console.log(this.state.currentQuote);
+      const { maxLength } = event.currentTarget;
       if (maxLength === this.state.currentQuote.length) {
         //마지막 글자 오타검사
         event.preventDefault();
         const {
-          currentTarget: { parentElement }
+          currentTarget: { parentElement, value }
         } = event;
         const compareLength = value.length - 1;
         const comSpan = parentElement?.getElementsByClassName(
           `c${compareLength}`
         )[0];
         this.isWrong(value, compareLength, comSpan);
-        if (this.state.inputIndex === 4) {
+        if (
+          this.state.pageNum === this.state.pageTotal &&
+          this.state.inputIndex === this.state.endQuoteIndex
+        ) {
+          this.stopTyping();
+        } else if (this.state.inputIndex === 4) {
           //다음장으로 이동합시다.
           this.goNextPage();
         } else {
@@ -223,24 +233,30 @@ class PracticeContainer extends Component<IProps, IState> {
           this.state.refs[nextIndex].focus();
           this.setState({ inputIndex: nextIndex, currentLength: 0 });
         }
-      } else {
-        return;
       }
     }
   };
 
-  createTimer() {
+  createTimer = () => {
     const timerId = setInterval(() => {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
     }, 1000);
     this.setState({
       timer: timerId
     });
-  }
+    if (this.state.isTest) {
+      setTimeout(this.stopTyping, 300000);
+    }
+  };
 
-  stopTimer() {
+  stopTimer = () => {
     clearInterval(this.state.timer);
-  }
+  };
+
+  stopTyping = () => {
+    this.stopTimer();
+    this.openModal();
+  };
 
   keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.defaultPrevented) {
@@ -257,9 +273,7 @@ class PracticeContainer extends Component<IProps, IState> {
     } = event;
     this.setState({ currentQuote: value });
     if (this.state.timer === 0) {
-      //timer 시작
-      //종료 타이밍은
-      //this.createTimer();
+      this.createTimer();
     }
   };
 
@@ -280,7 +294,6 @@ class PracticeContainer extends Component<IProps, IState> {
         `c${value.length}`
       )[0];
       this.deleteWrong(comSpan);
-
       this.setState({ currentLength: value.length });
     }
   };
@@ -345,6 +358,14 @@ class PracticeContainer extends Component<IProps, IState> {
       return 3;
     }
     return 1;
+  };
+
+  openModal = () => {
+    this.setState({ modal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modal: false });
   };
 }
 
