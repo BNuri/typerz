@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PracticePresenter from "./PracticePresenter";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { quoteApi } from "../../api";
+import { quoteApi, recordApi } from "../../api";
 
 const PREVENT_KEYS = [
   9,
@@ -100,6 +100,7 @@ class PracticeContainer extends Component<IProps, IState> {
       history: { push }
     } = this.props;
     const { isTest } = this.state;
+    console.log(typeof id);
     if (id.isNull) {
       return push("/");
     }
@@ -130,6 +131,7 @@ class PracticeContainer extends Component<IProps, IState> {
   }
 
   componentWillUnmount() {
+    this.setState({ modal: false });
     this.stopTimer();
   }
 
@@ -198,6 +200,7 @@ class PracticeContainer extends Component<IProps, IState> {
         keyUpHandler={this.keyUpHandler}
         changeHandler={this.changeHandler}
         closeModal={this.closeModal}
+        submitHandler={this.submitHandler}
       />
     );
   }
@@ -234,6 +237,8 @@ class PracticeContainer extends Component<IProps, IState> {
           this.setState({ inputIndex: nextIndex, currentLength: 0 });
         }
       }
+    } else if (event.keyCode === 27) {
+      this.stopTyping();
     }
   };
 
@@ -366,6 +371,41 @@ class PracticeContainer extends Component<IProps, IState> {
 
   closeModal = () => {
     this.setState({ modal: false });
+  };
+
+  createRecord = async (creator: string) => {
+    const { typeCnt, typeWrong, time, isTest } = this.state;
+    const kpm = Math.floor(
+      (typeCnt - typeWrong.reduce((first, next) => first + next, 0)) /
+        ((isTest ? 300 - time : time) / 60)
+    );
+    const accuracy = Math.floor(
+      ((typeCnt - typeWrong.reduce((first, next) => first + next, 0)) /
+        typeCnt) *
+        100
+    );
+    const newRecord = { kpm, accuracy, creator };
+    const {
+      match: {
+        params: { id }
+      }
+    } = this.props;
+    try {
+      const { data: myRecord } = await recordApi.createRecords(id, newRecord);
+      this.props.history.push({
+        pathname: `/ranking/${id}`,
+        state: { myRanking: myRecord._id }
+      });
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  submitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+    const { currentTarget } = event;
+    const name = currentTarget.getElementsByTagName("input")[0].value;
+    this.createRecord(name);
   };
 }
 

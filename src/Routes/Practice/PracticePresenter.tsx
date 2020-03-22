@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import Timer from "../../Components/Timer";
-import Speed from "../../Components/Speed";
-import Accuracy from "../../Components/Accuracy";
 import ModalPortal from "../../Components/ModalPortal";
 import Modal from "../../Components/Modal";
+import Practice from "../../Components/Practice";
+import Ranking from "../../Components/Ranking";
 
 const Container = styled.div`
   font-size: 20px;
@@ -17,31 +16,6 @@ const Container = styled.div`
 const Title = styled.h1``;
 
 const Writer = styled.h2``;
-
-const Quotes = styled.div`
-  width: 800px;
-`;
-
-const Quote = styled.div`
-  margin-top: 20px;
-`;
-
-const ComQuote = styled.div`
-  height: 30px;
-`;
-
-const Span = styled.span`
-  &.wrong {
-    background-color: red;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  border: none;
-`;
-
-const Page = styled.span``;
 
 interface IPractice {
   typeCnt: number;
@@ -58,6 +32,7 @@ interface IPractice {
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   closeModal: () => void;
+  submitHandler: (event: React.FormEvent) => void;
 }
 
 const PracticePresenter: React.FunctionComponent<IPractice> = ({
@@ -74,49 +49,25 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   keyDownHandler,
   keyUpHandler,
   changeHandler,
-  closeModal
+  closeModal,
+  submitHandler
 }) => (
   <Container>
-    <Speed
-      isTest={isTest}
-      time={time}
-      typeCnt={typeCnt}
-      typeWrong={typeWrong}
-    />
-    <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
-    <Timer time={time} />
     <Title>{result.title}</Title>
     <Writer>{result.writer}</Writer>
-    <Quotes>
-      {displayQuotes.map((q, index) => (
-        <Quote>
-          <ComQuote key={`cq${index}`}>
-            {q && q.length > 0 ? (
-              q
-                .split("")
-                .map((word, index) => (
-                  <Span className={`c${index}`}>{word}</Span>
-                ))
-            ) : (
-              <Span>↵</Span>
-            )}
-          </ComQuote>
-          <Input
-            type="text"
-            maxLength={q.length}
-            onKeyUp={keyUpHandler}
-            onKeyDown={keyDownHandler}
-            onChange={changeHandler}
-            ref={ref => (refs[index] = ref!)}
-            autoFocus={index === 0 ? true : false}
-            spellCheck="false"
-          ></Input>
-        </Quote>
-      ))}
-    </Quotes>
-    <Page>
-      {pageNum} / {pageTotal}
-    </Page>
+    <Practice
+      typeCnt={typeCnt}
+      typeWrong={typeWrong}
+      isTest={isTest}
+      pageNum={pageNum}
+      pageTotal={pageTotal}
+      time={time}
+      displayQuotes={displayQuotes}
+      refs={refs}
+      keyDownHandler={keyDownHandler}
+      keyUpHandler={keyUpHandler}
+      changeHandler={changeHandler}
+    />
     {modal && (
       <ModalPortal>
         <Modal
@@ -125,6 +76,7 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
           time={time}
           typeCnt={typeCnt}
           typeWrong={typeWrong}
+          submitHandler={submitHandler}
         />
       </ModalPortal>
     )}

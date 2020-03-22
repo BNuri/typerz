@@ -9,6 +9,7 @@ import Header from "./Header";
 import Home from "../Routes/Home";
 import Practice from "../Routes/Practice";
 import Manager from "../Routes/Manager";
+import Ranking from "./Ranking";
 
 export default () => (
   <Router>
@@ -18,7 +19,8 @@ export default () => (
         <Route path="/" exact component={Home} />
         <Route path="/practice/:id" component={Practice} />
         <Route path="/test/:id" component={Practice} />
-        <Route path="/manager" esact component={Manager} />
+        <Route path="/ranking/:id" component={Ranking} />
+        <Route path="/manager" exact component={Manager} />
         <Redirect from={"*"} to={"/"} />
       </Switch>
     </>

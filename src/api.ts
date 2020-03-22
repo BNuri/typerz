@@ -20,3 +20,16 @@ export const quoteApi = {
   createQuote: (newQuote: IQuote) => api.post("quotes", newQuote),
   deleteQuote: (id: string) => api.delete(`quotes/${id}`)
 };
+
+interface IRecord {
+  kpm: number;
+  accuracy: number;
+  creator: string;
+}
+
+export const recordApi = {
+  getRecords: () => api.get("records"),
+  getRecordsById: (id: string) => api.get(`records/${id}`),
+  createRecords: (id: string, record: IRecord) =>
+    api.post(`records/${id}`, record)
+};

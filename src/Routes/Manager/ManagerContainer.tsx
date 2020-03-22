@@ -49,7 +49,7 @@ class ManagerContainer extends Component<IState> {
       const data = await quoteApi.createQuote(newQuote);
       console.log(data);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     } finally {
     }
   };
