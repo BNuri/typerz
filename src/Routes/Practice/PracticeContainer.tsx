@@ -100,7 +100,6 @@ class PracticeContainer extends Component<IProps, IState> {
       history: { push }
     } = this.props;
     const { isTest } = this.state;
-    console.log(typeof id);
     if (id.isNull) {
       return push("/");
     }
@@ -171,7 +170,6 @@ class PracticeContainer extends Component<IProps, IState> {
   };
 
   render() {
-    console.log(this.state);
     const {
       typeCnt,
       typeWrong,
@@ -370,7 +368,7 @@ class PracticeContainer extends Component<IProps, IState> {
   };
 
   closeModal = () => {
-    this.setState({ modal: false });
+    this.props.history.push("/");
   };
 
   createRecord = async (creator: string) => {

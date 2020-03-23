@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const Content = styled.div`
   position: relative;
-  background-color: ${theme.greyColor};
+  background-color: ${theme.whiteColor};
   padding: 2rem;
 `;
 
@@ -65,7 +65,7 @@ const Modal: FunctionComponent<IProp> = ({
       <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
       <form onSubmit={submitHandler}>
         <span>이름을 입력하고 기록을 저장하세요!</span>
-        <Name type="text" />
+        <Name type="text" autoFocus={true} />
         <button>기록 저장</button>
       </form>
     </Content>

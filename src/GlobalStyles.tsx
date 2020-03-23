@@ -19,9 +19,11 @@ const globalStyle = createGlobalStyle`
         font-family: 'DungGeunMo';
     }
     body, input {
-        background-color: ${theme.greyColor};
+        background-color: ${theme.whiteColor};
     }
-    a{
+    a,
+    a:hover,
+    a:active{
         text-decoration: none;
         color: inherit;
     }

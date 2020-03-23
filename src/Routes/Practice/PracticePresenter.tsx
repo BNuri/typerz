@@ -3,7 +3,6 @@ import styled from "styled-components";
 import ModalPortal from "../../Components/ModalPortal";
 import Modal from "../../Components/Modal";
 import Practice from "../../Components/Practice";
-import Ranking from "../../Components/Ranking";
 
 const Container = styled.div`
   font-size: 20px;
