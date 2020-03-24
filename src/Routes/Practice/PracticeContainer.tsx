@@ -24,6 +24,7 @@ const PREVENT_KEYS = [
   91,
   92
 ];
+
 const NO_COUNT_KEYS = [
   8,
   13,

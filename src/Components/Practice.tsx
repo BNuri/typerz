@@ -101,6 +101,9 @@ const Practice: React.FunctionComponent<IProp> = ({
             onKeyUp={keyUpHandler}
             onKeyDown={keyDownHandler}
             onChange={changeHandler}
+            onPaste={event => {
+              event.preventDefault();
+            }}
             ref={ref => (refs[index] = ref!)}
             autoFocus={index === 0 ? true : false}
             spellCheck="false"
