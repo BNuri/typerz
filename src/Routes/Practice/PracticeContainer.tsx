@@ -112,11 +112,8 @@ class PracticeContainer extends Component<IProps, IState> {
     try {
       ({ data: result } = await quoteApi.getQuote(id));
       const { quote } = result;
-      const quoteArr = this.splitQuote(quote);
-      quoteArr.unshift(result.title, result.writer);
-      result.quote = quoteArr;
-      pageTotal = Math.ceil(quoteArr.length / 5);
-      endQuoteIndex = (quoteArr.length % 5) - 1 < 0 ? 4 : quoteArr.length % 5;
+      pageTotal = Math.ceil(quote.length / 5);
+      endQuoteIndex = (quote.length % 5) - 1 < 0 ? 4 : quote.length % 5;
     } catch (error) {
       console.warn(error);
     } finally {
@@ -133,32 +130,6 @@ class PracticeContainer extends Component<IProps, IState> {
     this.setState({ modal: false });
     this.stopTimer();
   }
-
-  splitByLength = (quote: string) => {
-    let length = quote.length;
-    let cnt = length / 40;
-    let arr: string[] = [];
-    for (let i = 0; i < cnt; i++) {
-      const sub = quote.substr(i * 40, 40);
-      arr.push(sub[0] === " " ? sub.replace(" ", "") : sub);
-    }
-    return arr;
-  };
-
-  splitQuote = (quote: string) => {
-    const RE = /(\r\n|\n|\r)/gm;
-    let quoteArr: string[] = quote.split(RE);
-    quoteArr = quoteArr.filter(quote => !quote.match(RE));
-    let resultArr: string[] = [];
-    quoteArr.forEach(q => {
-      if (q.length > 40) {
-        resultArr.push(...this.splitByLength(q));
-      } else {
-        resultArr.push(q);
-      }
-    });
-    return resultArr;
-  };
 
   sliceDisplayQuotes = () => {
     const {
