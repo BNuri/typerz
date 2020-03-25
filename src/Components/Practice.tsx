@@ -53,8 +53,8 @@ interface IProp {
   displayQuotes: string[];
   refs: HTMLInputElement[];
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Practice: React.FunctionComponent<IProp> = ({
@@ -67,8 +67,8 @@ const Practice: React.FunctionComponent<IProp> = ({
   displayQuotes,
   refs,
   keyDownHandler,
-  keyUpHandler,
-  changeHandler
+  keyPressHandler,
+  keyUpHandler
 }) => (
   <Container>
     <NumberContainer>
@@ -98,9 +98,9 @@ const Practice: React.FunctionComponent<IProp> = ({
           <Input
             type="text"
             maxLength={q.length}
-            onKeyUp={keyUpHandler}
             onKeyDown={keyDownHandler}
-            onChange={changeHandler}
+            onKeyPress={keyPressHandler}
+            onKeyUp={keyUpHandler}
             onPaste={event => {
               event.preventDefault();
             }}

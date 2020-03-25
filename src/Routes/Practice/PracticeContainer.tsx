@@ -53,11 +53,11 @@ interface IProps extends RouteComponentProps<any> {}
 interface IState {
   typeCnt: number;
   typeWrong: number[];
-  currentLength: number;
+  currentIndex: number;
   currentQuote: string;
   pageNum: number;
   pageTotal: number;
-  endQuoteIndex: number;
+  endInputIndex: number;
   isTest: boolean;
   time: number;
   timer: number;
@@ -77,11 +77,11 @@ class PracticeContainer extends Component<IProps, IState> {
     this.state = {
       typeCnt: 0,
       typeWrong: [],
-      currentLength: 0,
+      currentIndex: 0,
       currentQuote: "",
       pageNum: 0,
       pageTotal: 0,
-      endQuoteIndex: 0,
+      endInputIndex: 0,
       isTest: pathname.includes("/test/"),
       time: 0,
       timer: 0,
@@ -92,6 +92,15 @@ class PracticeContainer extends Component<IProps, IState> {
       modal: false
     };
   }
+
+  sliceCurrentQuotes = () => {
+    const {
+      result: { quote },
+      pageNum
+    } = this.state;
+    const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
+    this.setState({ displayQuotes, pageNum: this.state.pageNum + 1 });
+  };
 
   async componentDidMount() {
     const {
@@ -106,7 +115,7 @@ class PracticeContainer extends Component<IProps, IState> {
     }
     let result = null,
       pageTotal = 0,
-      endQuoteIndex = 0;
+      endInputIndex = 0;
     if (isTest) {
       this.setState({ time: 300 });
     }
@@ -114,16 +123,16 @@ class PracticeContainer extends Component<IProps, IState> {
       ({ data: result } = await quoteApi.getQuote(id));
       const { quote } = result;
       pageTotal = Math.ceil(quote.length / 5);
-      endQuoteIndex = (quote.length % 5) - 1 < 0 ? 4 : quote.length % 5;
+      endInputIndex = (quote.length % 5) - 1 < 0 ? 4 : (quote.length % 5) - 1;
     } catch (error) {
       console.warn(error);
     } finally {
       this.setState({
         result,
         pageTotal,
-        endQuoteIndex
+        endInputIndex
       });
-      this.sliceDisplayQuotes();
+      this.sliceCurrentQuotes();
     }
   }
 
@@ -131,15 +140,6 @@ class PracticeContainer extends Component<IProps, IState> {
     this.setState({ modal: false });
     this.stopTimer();
   }
-
-  sliceDisplayQuotes = () => {
-    const {
-      result: { quote }
-    } = this.state;
-    const { pageNum } = this.state;
-    const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
-    this.setState({ displayQuotes, pageNum: this.state.pageNum + 1 });
-  };
 
   render() {
     const {
@@ -167,48 +167,39 @@ class PracticeContainer extends Component<IProps, IState> {
         time={time}
         modal={modal}
         keyDownHandler={this.keyDownHandler}
+        keyPressHandler={this.keyPressHandler}
         keyUpHandler={this.keyUpHandler}
-        changeHandler={this.changeHandler}
         closeModal={this.closeModal}
         submitHandler={this.submitHandler}
       />
     );
   }
 
-  keyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // enter, 스페이스는 글 length와 같을때만 입력가능.
-    if (event.defaultPrevented) {
-      return;
-    }
-    if (event.keyCode === 13 || event.keyCode === 32) {
-      const { maxLength } = event.currentTarget;
-      if (maxLength === this.state.currentQuote.length) {
-        //마지막 글자 오타검사
-        event.preventDefault();
-        const {
-          currentTarget: { parentElement, value }
-        } = event;
-        const compareLength = value.length - 1;
-        const comSpan = parentElement?.getElementsByClassName(
-          `c${compareLength}`
-        )[0];
-        this.isWrong(value, compareLength, comSpan);
-        if (
-          this.state.pageNum === this.state.pageTotal &&
-          this.state.inputIndex === this.state.endQuoteIndex
-        ) {
-          this.stopTyping();
-        } else if (this.state.inputIndex === 4) {
-          //다음장으로 이동합시다.
-          this.goNextPage();
-        } else {
-          const nextIndex = this.state.inputIndex + 1;
-          this.state.refs[nextIndex].focus();
-          this.setState({ inputIndex: nextIndex, currentLength: 0 });
-        }
-      }
-    } else if (event.keyCode === 27) {
+  goNextLine = () => {
+    const { inputIndex } = this.state;
+    const nextIndex = inputIndex + 1;
+    this.state.refs[nextIndex].focus();
+    this.setState({ inputIndex: nextIndex, currentIndex: 0 });
+  };
+
+  goNextPage = () => {
+    this.sliceCurrentQuotes();
+    this.state.refs.map(ref => (ref.value = ""));
+    this.state.refs[0].focus();
+    this.setState({ inputIndex: 0, currentIndex: 0 });
+    document
+      .querySelectorAll(".wrong")
+      .forEach(span => span.classList.remove("wrong"));
+  };
+
+  goNextStep = () => {
+    const { pageNum, pageTotal, inputIndex, endInputIndex } = this.state;
+    if (pageNum === pageTotal && inputIndex === endInputIndex) {
       this.stopTyping();
+    } else if (inputIndex === 4) {
+      this.goNextPage();
+    } else {
+      this.goNextLine();
     }
   };
 
@@ -228,92 +219,42 @@ class PracticeContainer extends Component<IProps, IState> {
     clearInterval(this.state.timer);
   };
 
+  openModal = () => {
+    this.setState({ modal: true });
+  };
+
+  closeModal = () => {
+    this.props.history.push("/");
+  };
+
   stopTyping = () => {
     this.stopTimer();
     this.openModal();
   };
 
   keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.defaultPrevented) {
-      return;
-    }
-    if (PREVENT_KEYS.includes(event.keyCode)) {
+    const { keyCode } = event;
+    if (PREVENT_KEYS.includes(keyCode)) {
       event.preventDefault();
       return;
-    } else if (!NO_COUNT_KEYS.includes(event.keyCode)) {
+    } else if (!NO_COUNT_KEYS.includes(keyCode)) {
       this.setState({ typeCnt: this.state.typeCnt + 1 });
     }
-    const {
-      currentTarget: { value }
-    } = event;
-    this.setState({ currentQuote: value });
     if (this.state.timer === 0) {
-      this.createTimer();
+      // this.createTimer();
     }
   };
 
-  changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  keyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const {
-      target: { value, parentElement }
+      which,
+      currentTarget: { maxLength, value }
     } = event;
-    //length 달라질 때마다 갱신
-    if (this.state.currentLength < value.length) {
-      if (value.length === 1) return;
-      const compareLength = value.length - 2;
-      const comSpan = parentElement?.getElementsByClassName(
-        `c${compareLength}`
-      )[0];
-      this.isWrong(value, compareLength, comSpan);
-    } else if (this.state.currentLength > value.length) {
-      const comSpan = parentElement?.getElementsByClassName(
-        `c${value.length}`
-      )[0];
-      this.deleteWrong(comSpan);
-      this.setState({ currentLength: value.length });
+    if (which === 13) {
+      if (maxLength === value.length) {
+        this.goNextStep();
+      }
     }
-  };
-
-  //오타 수정
-  deleteWrong = (comSpan?: Element) => {
-    const comClass = comSpan?.className;
-    if (comClass?.includes("wrong")) {
-      this.setState({
-        typeWrong: this.state.typeWrong.filter(
-          (w, i) => i !== this.state.typeWrong.length - 1
-        )
-      });
-      comSpan?.classList.remove("wrong");
-    }
-  };
-
-  //오타 탐지
-  isWrong = (value: string, compareLength: number, comSpan?: Element) => {
-    if (!comSpan) return;
-    const userChar = value[compareLength];
-    const comClass = comSpan.className;
-    const comChar = comSpan.textContent;
-    if (!comChar) return;
-    const stroke = this.getStroke(comChar);
-    if (comChar !== userChar && !comClass?.includes("wrong")) {
-      this.setState({ typeWrong: [...this.state.typeWrong, stroke] });
-      comSpan?.classList.add("wrong");
-    }
-    this.setState({ currentLength: compareLength + 1 });
-  };
-
-  clickHandler = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    console.log(event);
-    //클릭 막기
-  };
-
-  goNextPage = () => {
-    this.sliceDisplayQuotes();
-    this.state.refs.map(ref => (ref.value = ""));
-    this.state.refs[0].focus();
-    this.setState({ inputIndex: 0, currentLength: 0 });
-    document
-      .querySelectorAll(".wrong")
-      .forEach(span => span.classList.remove("wrong"));
   };
 
   getStroke = (kor?: string) => {
@@ -335,12 +276,65 @@ class PracticeContainer extends Component<IProps, IState> {
     return 1;
   };
 
-  openModal = () => {
-    this.setState({ modal: true });
+  isWrong = (value: string, compareIndex: number, comSpan?: Element) => {
+    if (!comSpan) return;
+    const userChar = value[compareIndex];
+    const comClass = comSpan.className;
+    const comChar = comSpan.textContent;
+    if (!comChar) return;
+    const stroke = this.getStroke(comChar);
+    if (comChar !== userChar && !comClass?.includes("wrong")) {
+      this.setState({ typeWrong: [...this.state.typeWrong, stroke] });
+      comSpan?.classList.add("wrong");
+    }
   };
 
-  closeModal = () => {
-    this.props.history.push("/");
+  deleteWrong = (comSpan?: Element) => {
+    const comClass = comSpan?.className;
+    if (comClass?.includes("wrong")) {
+      this.setState({
+        typeWrong: this.state.typeWrong.filter(
+          (w, i) => i !== this.state.typeWrong.length - 1
+        )
+      });
+      comSpan?.classList.remove("wrong");
+    }
+  };
+
+  keyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const { maxLength, value, parentElement } = event.currentTarget;
+    let compareIndex = value.length - 2;
+    if (event.keyCode === 13 || event.keyCode === 32) {
+      if (maxLength === value.length) {
+        compareIndex++;
+        if (event.keyCode === 32) {
+          this.goNextStep();
+        }
+      }
+    } else if (event.keyCode === 27) {
+      //****************************************지울것
+      this.stopTyping();
+    }
+    if (this.state.currentIndex < value.length) {
+      if (value.length === 1) return;
+
+      const comSpan = parentElement?.getElementsByClassName(
+        `c${compareIndex}`
+      )[0];
+      this.isWrong(value, compareIndex, comSpan);
+      this.setState({ currentIndex: compareIndex + 1 });
+    } else if (this.state.currentIndex >= value.length) {
+      const comSpan = parentElement?.getElementsByClassName(
+        `c${value.length}`
+      )[0];
+      this.deleteWrong(comSpan);
+      this.setState({ currentIndex: value.length });
+    }
+  };
+
+  clickHandler = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    console.log(event);
+    //클릭 막기
   };
 
   createRecord = async (creator: string) => {

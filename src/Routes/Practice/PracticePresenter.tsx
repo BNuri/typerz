@@ -28,8 +28,8 @@ interface IPractice {
   refs: HTMLInputElement[];
   modal: boolean;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   closeModal: () => void;
   submitHandler: (event: React.FormEvent) => void;
 }
@@ -46,8 +46,8 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   refs,
   modal,
   keyDownHandler,
+  keyPressHandler,
   keyUpHandler,
-  changeHandler,
   closeModal,
   submitHandler
 }) => (
@@ -64,8 +64,8 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
       displayQuotes={displayQuotes}
       refs={refs}
       keyDownHandler={keyDownHandler}
+      keyPressHandler={keyPressHandler}
       keyUpHandler={keyUpHandler}
-      changeHandler={changeHandler}
     />
     {modal && (
       <ModalPortal>
