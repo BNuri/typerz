@@ -53,6 +53,7 @@ interface IProps extends RouteComponentProps<any> {}
 interface IState {
   typeCnt: number;
   typeWrong: number[];
+  currentValue: string;
   currentIndex: number;
   currentQuote: string;
   pageNum: number;
@@ -77,6 +78,7 @@ class PracticeContainer extends Component<IProps, IState> {
     this.state = {
       typeCnt: 0,
       typeWrong: [],
+      currentValue: "",
       currentIndex: 0,
       currentQuote: "",
       pageNum: 0,
@@ -169,6 +171,7 @@ class PracticeContainer extends Component<IProps, IState> {
         keyDownHandler={this.keyDownHandler}
         keyPressHandler={this.keyPressHandler}
         keyUpHandler={this.keyUpHandler}
+        changeHandler={this.changeHandler}
         closeModal={this.closeModal}
         submitHandler={this.submitHandler}
       />
@@ -303,10 +306,15 @@ class PracticeContainer extends Component<IProps, IState> {
 
   keyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const { maxLength, value, parentElement } = event.currentTarget;
-    let compareIndex = value.length - 2;
     if (event.keyCode === 13 || event.keyCode === 32) {
       if (maxLength === value.length) {
-        compareIndex++;
+        const { currentValue } = this.state;
+        let compareIndex = currentValue.length - 1;
+        const comSpan = parentElement?.getElementsByClassName(
+          `c${compareIndex}`
+        )[0];
+        this.isWrong(currentValue, compareIndex, comSpan);
+        this.setState({ currentIndex: 0, currentValue: "" });
         if (event.keyCode === 32) {
           this.goNextStep();
         }
@@ -315,20 +323,27 @@ class PracticeContainer extends Component<IProps, IState> {
       //****************************************지울것
       this.stopTyping();
     }
-    if (this.state.currentIndex < value.length) {
-      if (value.length === 1) return;
+  };
+
+  changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, parentElement } = event.currentTarget;
+    const { currentValue } = this.state;
+    const compareIndex = currentValue.length - 2;
+    this.setState({ currentValue: value });
+    if (this.state.currentIndex < currentValue.length) {
+      if (currentValue.length === 1) return;
 
       const comSpan = parentElement?.getElementsByClassName(
         `c${compareIndex}`
       )[0];
-      this.isWrong(value, compareIndex, comSpan);
+      this.isWrong(currentValue, compareIndex, comSpan);
       this.setState({ currentIndex: compareIndex + 1 });
-    } else if (this.state.currentIndex >= value.length) {
+    } else if (this.state.currentIndex >= currentValue.length) {
       const comSpan = parentElement?.getElementsByClassName(
-        `c${value.length}`
+        `c${currentValue.length - 1}`
       )[0];
       this.deleteWrong(comSpan);
-      this.setState({ currentIndex: value.length });
+      this.setState({ currentIndex: currentValue.length - 1 });
     }
   };
 
