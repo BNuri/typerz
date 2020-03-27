@@ -1,19 +1,21 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 100px);
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  font-size: 18px;
 `;
 
-const Title = styled.h1``;
-
-const Checkbox = styled.section``;
+const CheckContainer = styled.section`
+  padding-top: 30px;
+`;
 
 const Label = styled.label`
   padding: 0px 10px;
@@ -21,9 +23,43 @@ const Label = styled.label`
 
 const Input = styled.input``;
 
-const Quotes = styled.ul``;
+const QuotesContainer = styled.section`
+  margin-top: 40px;
+`;
 
-const Quote = styled.li``;
+const Quotes = styled.ul`
+  margin: 10px;
+  width: 500px;
+`;
+
+const blink = keyframes`
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+`;
+
+const Quote = styled.li`
+  padding: 13px 10px;
+  padding-left: 15px;
+  position: relative;
+  &:hover:before {
+    position: absolute;
+    top: 13px;
+    left: -10px;
+    content: "";
+    width: 2px;
+    height: 2px;
+    color: #212529;
+    box-shadow: 2px 2px, 4px 2px, 2px 4px, 4px 4px, 6px 4px, 8px 4px, 2px 6px,
+      4px 6px, 6px 6px, 8px 6px, 10px 6px, 2px 8px, 4px 8px, 6px 8px, 8px 8px,
+      10px 8px, 12px 8px, 2px 10px, 4px 10px, 6px 10px, 8px 10px, 10px 10px,
+      2px 12px, 4px 12px, 6px 12px, 8px 12px, 2px 14px, 4px 14px;
+    animation: ${blink} 1s infinite steps(1);
+  }
+`;
 
 interface IProps {
   quotes: { _id: string; title: string }[];
@@ -37,8 +73,7 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
   changeHandler
 }) => (
   <Container>
-    <Title>타자 연습</Title>
-    <Checkbox className="nes-container is-rounded">
+    <CheckContainer className="nes-container is-rounded">
       <Label>
         <Input
           type="radio"
@@ -61,14 +96,21 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
         />
         <span>타자 검정</span>
       </Label>
-    </Checkbox>
-    <Quotes>
-      {quotes.map(quote => (
-        <Link to={`/${isTest ? "test" : "practice"}/${quote._id}`}>
-          <Quote key={quote._id}>{quote.title}</Quote>
-        </Link>
-      ))}
-    </Quotes>
+    </CheckContainer>
+    <QuotesContainer>
+      <Quotes className="nes-container is-rounded">
+        {quotes.map(quote => (
+          <Link
+            to={`/${isTest ? "test" : "practice"}/${quote._id}`}
+            key={quote._id}
+          >
+            <Quote key={quote._id}>
+              {quote.title.length > 20 ? quote.title + "..." : quote.title}
+            </Quote>
+          </Link>
+        ))}
+      </Quotes>
+    </QuotesContainer>
   </Container>
 );
 
