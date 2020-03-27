@@ -1,17 +1,51 @@
 import React from "react";
 import styled from "styled-components";
 
-const Container = styled.div``;
+const Container = styled.div`
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+`;
 
-const Form = styled.form``;
+const H1 = styled.h1`
+  font-size: 22px;
+  padding-bottom: 30px;
+`;
+
+const Field = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  margin-bottom: 10px;
+  margin-left: 5px;
+`;
+
+const Required = styled.span`
+  padding-left: 5px;
+  color: red;
+`;
+
+const Form = styled.form`
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+`;
 
 const Title = styled.input``;
 
 const Writer = styled.input``;
 
-const Quote = styled.textarea``;
+const Quote = styled.textarea`
+  height: 300px;
+`;
 
-const Button = styled.button``;
+const Button = styled.button`
+  align-self: center;
+`;
 
 interface IManager {
   title: string;
@@ -31,28 +65,47 @@ const ManagerPresenter: React.FunctionComponent<IManager> = ({
   onFormSubmit
 }) => (
   <Container>
+    <H1>문장 추가하기</H1>
     <Form onSubmit={onFormSubmit}>
-      <Title
-        type="text"
-        placeholder="제목"
-        name="title"
-        value={title}
-        onChange={onInputChange}
-      />
-      <Writer
-        type="text"
-        placeholder="작가"
-        name="writer"
-        value={writer}
-        onChange={onInputChange}
-      />
-      <Quote
-        placeholder="내용을 입력하세요."
-        name="quote"
-        value={quote}
-        onChange={onTextareaChange}
-      />
-      <Button>등록</Button>
+      <Field className="nes-field">
+        <Label htmlFor="title">
+          제목<Required>*</Required>
+        </Label>
+        <Title
+          type="text"
+          id="title"
+          name="title"
+          value={title}
+          onChange={onInputChange}
+          className="nes-input"
+          required={true}
+        />
+      </Field>
+      <Field className="nes-field">
+        <Label htmlFor="writer">작가</Label>
+        <Writer
+          type="text"
+          id="writer"
+          name="writer"
+          value={writer}
+          onChange={onInputChange}
+          className="nes-input"
+        />
+      </Field>
+      <Field className="nes-field">
+        <Label htmlFor="quote">
+          내용을 입력하세요.<Required>*</Required>
+        </Label>
+        <Quote
+          id="quote"
+          name="quote"
+          value={quote}
+          onChange={onTextareaChange}
+          className="nes-textarea"
+          required={true}
+        />
+      </Field>
+      <Button className="nes-btn is-warning">등록</Button>
     </Form>
   </Container>
 );
