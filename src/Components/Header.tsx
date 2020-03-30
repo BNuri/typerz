@@ -7,7 +7,7 @@ const Container = styled.header`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  font-size: 20px;
+  font-size: 24px;
 `;
 
 const Title = styled.h1``;

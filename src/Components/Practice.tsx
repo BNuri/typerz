@@ -5,10 +5,11 @@ import Speed from "./Speed";
 import Accuracy from "./Accuracy";
 
 const Container = styled.div`
+  height: 100%;
   padding-top: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 `;
 
@@ -20,10 +21,11 @@ const NumberContainer = styled.div`
 
 const Quotes = styled.div`
   width: 800px;
+  height: 400px;
 `;
 
 const Quote = styled.div`
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 
 const ComQuote = styled.div`
@@ -31,8 +33,17 @@ const ComQuote = styled.div`
 `;
 
 const Span = styled.span`
-  &.wrong {
-    background-color: red;
+  position: relative;
+  &.wrong: before {
+    position: absolute;
+    top: -15px;
+    left: 3px;
+    content: "";
+    height: 8px;
+    width: 12px;
+    border-bottom: 3px solid red;
+    border-left: 3px solid red;
+    transform: rotate(-40deg);
   }
 `;
 
@@ -42,6 +53,14 @@ const Input = styled.input`
 `;
 
 const Page = styled.span``;
+
+const PreventClick = styled.div`
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+`;
 
 interface IProp {
   typeCnt: number;
@@ -74,7 +93,7 @@ const Practice: React.FunctionComponent<IProp> = ({
 }) => (
   <Container>
     <NumberContainer>
-      <Timer time={time} />
+      <Timer time={time} isTest={isTest} />
       <Speed
         isTest={isTest}
         time={time}
@@ -117,6 +136,7 @@ const Practice: React.FunctionComponent<IProp> = ({
     <Page>
       {pageNum} / {pageTotal}
     </Page>
+    <PreventClick />
   </Container>
 );
 

@@ -20,6 +20,7 @@ const globalStyle = createGlobalStyle`
     }
     body, input {
         background-color: ${theme.whiteColor};
+        font-size: 20px;
     }
     a,
     a:hover,

@@ -10,7 +10,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  font-size: 18px;
 `;
 
 const CheckContainer = styled.section`
@@ -23,13 +22,10 @@ const Label = styled.label`
 
 const Input = styled.input``;
 
-const QuotesContainer = styled.section`
-  margin-top: 40px;
-`;
-
 const Quotes = styled.ul`
-  margin: 10px;
   width: 500px;
+  max-length: 500px;
+  margin: 50px 4px 4px 4px !important;
 `;
 
 const blink = keyframes`
@@ -97,20 +93,18 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
         <span>타자 검정</span>
       </Label>
     </CheckContainer>
-    <QuotesContainer>
-      <Quotes className="nes-container is-rounded">
-        {quotes.map(quote => (
-          <Link
-            to={`/${isTest ? "test" : "practice"}/${quote._id}`}
-            key={quote._id}
-          >
-            <Quote key={quote._id}>
-              {quote.title.length > 20 ? quote.title + "..." : quote.title}
-            </Quote>
-          </Link>
-        ))}
-      </Quotes>
-    </QuotesContainer>
+    <Quotes className="nes-container is-rounded">
+      {quotes.map(quote => (
+        <Link
+          to={`/${isTest ? "test" : "practice"}/${quote._id}`}
+          key={quote._id}
+        >
+          <Quote key={quote._id}>
+            {quote.title.length > 20 ? quote.title + "..." : quote.title}
+          </Quote>
+        </Link>
+      ))}
+    </Quotes>
   </Container>
 );
 

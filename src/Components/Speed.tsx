@@ -10,13 +10,14 @@ const Speed: React.FunctionComponent<{
   typeWrong: number[];
 }> = ({ isTest, time, typeCnt, typeWrong }) => (
   <Container>
-    타수:{" "}
+    타속:{" "}
     {(isTest ? 300 - time : time) > 0
       ? Math.floor(
           (typeCnt - typeWrong.reduce((first, next) => first + next, 0)) /
             ((isTest ? 300 - time : time) / 60)
         )
       : 0}
+    타
   </Container>
 );
 

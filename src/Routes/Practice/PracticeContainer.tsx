@@ -62,6 +62,7 @@ interface IState {
   isTest: boolean;
   time: number;
   timer: number;
+  focuser: number;
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
   refs: HTMLInputElement[];
@@ -87,6 +88,7 @@ class PracticeContainer extends Component<IProps, IState> {
       isTest: pathname.includes("/test/"),
       time: 0,
       timer: 0,
+      focuser: 0,
       result: { title: "", writer: "", quote: [] },
       displayQuotes: [],
       refs: [],
@@ -102,6 +104,13 @@ class PracticeContainer extends Component<IProps, IState> {
     } = this.state;
     const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
     this.setState({ displayQuotes, pageNum: this.state.pageNum + 1 });
+  };
+
+  createFocuser = () => {
+    const focuserId = setInterval(() => {
+      this.state.refs[this.state.inputIndex].focus();
+    }, 1000);
+    this.setState({ focuser: focuserId });
   };
 
   async componentDidMount() {
@@ -121,6 +130,7 @@ class PracticeContainer extends Component<IProps, IState> {
     if (isTest) {
       this.setState({ time: 300 });
     }
+    this.createFocuser();
     try {
       ({ data: result } = await quoteApi.getQuote(id));
       const { quote } = result;
@@ -209,6 +219,7 @@ class PracticeContainer extends Component<IProps, IState> {
   createTimer = () => {
     const timerId = setInterval(() => {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
+      // this.state.refs[this.state.inputIndex].focus();
     }, 1000);
     this.setState({
       timer: timerId
@@ -220,6 +231,7 @@ class PracticeContainer extends Component<IProps, IState> {
 
   stopTimer = () => {
     clearInterval(this.state.timer);
+    clearInterval(this.state.focuser);
   };
 
   openModal = () => {
@@ -286,6 +298,7 @@ class PracticeContainer extends Component<IProps, IState> {
     const userChar = value[compareIndex];
     const comClass = comSpan.className;
     const comChar = comSpan.textContent;
+    console.log(`comChar: ${comChar} userChar: ${userChar}`);
     if (!comChar) return;
     const stroke = this.getStroke(comChar);
     if (comChar !== userChar && !comClass?.includes("wrong")) {
@@ -330,13 +343,13 @@ class PracticeContainer extends Component<IProps, IState> {
   changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, parentElement } = event.currentTarget;
     const { currentValue, currentIndex } = this.state;
-    const compareIndex = currentValue.length - 2;
+    const compareIndex = value.length - 2;
     if (currentIndex < value.length) {
       if (value.length === 1) return;
       const comSpan = parentElement?.getElementsByClassName(
         `c${compareIndex}`
       )[0];
-      this.isWrong(currentValue, compareIndex, comSpan);
+      this.isWrong(value, compareIndex, comSpan);
       this.setState({ currentIndex: compareIndex + 1 });
     } else {
       const comSpan = parentElement?.getElementsByClassName(
@@ -347,11 +360,6 @@ class PracticeContainer extends Component<IProps, IState> {
         currentIndex: currentValue.length - 1
       });
     }
-  };
-
-  clickHandler = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    console.log(event);
-    //클릭 막기
   };
 
   createRecord = async (creator: string) => {

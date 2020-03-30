@@ -16,6 +16,7 @@ const Accuracy: React.FunctionComponent<{
             100
         )
       : 0}
+    %
   </Container>
 );
 

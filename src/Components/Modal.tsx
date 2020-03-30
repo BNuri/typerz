@@ -15,23 +15,54 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 20px;
+  z-index: 2;
 `;
 
 const Content = styled.div`
   position: relative;
   background-color: ${theme.whiteColor};
-  padding: 2rem;
+  padding: 2rem 4rem;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
   right: 0;
   top: 0;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
 `;
 
-const Title = styled.h3``;
+const Title = styled.h3`
+  font-size: 22px;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const ResultContainer = styled.div`
+  height: 80px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+`;
+
+const Form = styled.form`
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Label = styled.label`
+  text-align: center;
+  padding-bottom: 10px;
+`;
 
 const Name = styled.input``;
+
+const Button = styled.button``;
 
 interface IProp {
   closeModal: () => void;
@@ -52,22 +83,33 @@ const Modal: FunctionComponent<IProp> = ({
 }) => (
   <Container>
     <Content>
-      <CloseButton onClick={closeModal}>X</CloseButton>
+      <CloseButton onClick={closeModal}>
+        <i className="nes-icon close is-small" />
+      </CloseButton>
       <Title>{isTest ? "검정 결과" : "연습 결과"}</Title>
-      <span>{isTest ? "검정 시간: " : "연습 시간: "}</span>
-      <Timer time={isTest ? 300 - time : time} />
-      <Speed
-        isTest={isTest}
-        time={time}
-        typeCnt={typeCnt}
-        typeWrong={typeWrong}
-      />
-      <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
-      <form onSubmit={submitHandler}>
-        <span>이름을 입력하고 기록을 저장하세요!</span>
-        <Name type="text" autoFocus={true} />
-        <button>기록 저장</button>
-      </form>
+      <ResultContainer>
+        <Timer time={isTest ? 300 - time : time} isTest={isTest} />
+        <Speed
+          isTest={isTest}
+          time={time}
+          typeCnt={typeCnt}
+          typeWrong={typeWrong}
+        />
+        <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
+      </ResultContainer>
+      <Form onSubmit={submitHandler}>
+        <Label htmlFor="name">이름을 입력하고 기록을 저장하세요!</Label>
+        <div className="nes-field is-inline">
+          <Name
+            type="text"
+            className="nes-input"
+            autoFocus={true}
+            id="name"
+            maxLength={10}
+          />
+          <Button className="nes-btn is-warning">기록 저장</Button>
+        </div>
+      </Form>
     </Content>
   </Container>
 );

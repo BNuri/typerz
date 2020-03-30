@@ -5,16 +5,28 @@ import Modal from "../../Components/Modal";
 import Practice from "../../Components/Practice";
 
 const Container = styled.div`
-  font-size: 20px;
+  width: 100%;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 `;
 
-const Title = styled.h1``;
+const H1 = styled.h1`
+  font-size: 22px;
+  padding-bottom: 50px;
+`;
 
-const Writer = styled.h2``;
+const QuoteContainer = styled.div`
+  width: 1000px;
+  height: 600px;
+  text-align: left !important;
+`;
+
+const Title = styled.h1`
+  font-size: 20px !important;
+  margin: -2rem auto 1rem !important;
+`;
 
 interface IPractice {
   typeCnt: number;
@@ -54,22 +66,26 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   submitHandler
 }) => (
   <Container>
-    <Title>{result.title}</Title>
-    <Writer>{result.writer}</Writer>
-    <Practice
-      typeCnt={typeCnt}
-      typeWrong={typeWrong}
-      isTest={isTest}
-      pageNum={pageNum}
-      pageTotal={pageTotal}
-      time={time}
-      displayQuotes={displayQuotes}
-      refs={refs}
-      keyDownHandler={keyDownHandler}
-      keyPressHandler={keyPressHandler}
-      keyUpHandler={keyUpHandler}
-      changeHandler={changeHandler}
-    />
+    <H1>{isTest ? "타자 검정" : "타자 연습"}</H1>
+    <QuoteContainer className="nes-container with-title is-rounded is-centered">
+      <Title className="title">
+        {result.writer ? result.title + " - " + result.writer : result.title}
+      </Title>
+      <Practice
+        typeCnt={typeCnt}
+        typeWrong={typeWrong}
+        isTest={isTest}
+        pageNum={pageNum}
+        pageTotal={pageTotal}
+        time={time}
+        displayQuotes={displayQuotes}
+        refs={refs}
+        keyDownHandler={keyDownHandler}
+        keyPressHandler={keyPressHandler}
+        keyUpHandler={keyUpHandler}
+        changeHandler={changeHandler}
+      />
+    </QuoteContainer>
     {modal && (
       <ModalPortal>
         <Modal
