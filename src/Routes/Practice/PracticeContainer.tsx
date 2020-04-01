@@ -127,10 +127,6 @@ class PracticeContainer extends Component<IProps, IState> {
     let result = null,
       pageTotal = 0,
       endInputIndex = 0;
-    if (isTest) {
-      this.setState({ time: 300 });
-    }
-    this.createFocuser();
     try {
       ({ data: result } = await quoteApi.getQuote(id));
       const { quote } = result;
@@ -142,9 +138,11 @@ class PracticeContainer extends Component<IProps, IState> {
       this.setState({
         result,
         pageTotal,
-        endInputIndex
+        endInputIndex,
+        time: isTest ? 300 : 0
       });
       this.sliceCurrentQuotes();
+      this.createFocuser();
     }
   }
 
@@ -198,6 +196,7 @@ class PracticeContainer extends Component<IProps, IState> {
   goNextPage = () => {
     this.sliceCurrentQuotes();
     this.state.refs.map(ref => (ref.value = ""));
+    console.log(this.state.refs);
     this.state.refs[0].focus();
     this.setState({ inputIndex: 0, currentIndex: 0 });
     document
@@ -219,7 +218,6 @@ class PracticeContainer extends Component<IProps, IState> {
   createTimer = () => {
     const timerId = setInterval(() => {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
-      // this.state.refs[this.state.inputIndex].focus();
     }, 1000);
     this.setState({
       timer: timerId
@@ -298,7 +296,6 @@ class PracticeContainer extends Component<IProps, IState> {
     const userChar = value[compareIndex];
     const comClass = comSpan.className;
     const comChar = comSpan.textContent;
-    console.log(`comChar: ${comChar} userChar: ${userChar}`);
     if (!comChar) return;
     const stroke = this.getStroke(comChar);
     if (comChar !== userChar && !comClass?.includes("wrong")) {

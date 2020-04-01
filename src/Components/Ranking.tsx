@@ -4,41 +4,67 @@ import { recordApi, quoteApi } from "../api";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { StaticContext } from "react-router";
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
-  padding-top: 20px;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const Title = styled.h1``;
-
-const Writer = styled.h2``;
-
-const STitle = styled.h3``;
-
-const RankingUl = styled.ul`
-  padding-top: 20px;
-  width: 600px;
+const STitle = styled.h1`
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
 `;
 
-const RankingLi = styled.li`
+const Title = styled.h2`
+  font-size: 22px !important;
+  margin: -2rem auto 1rem !important;
+`;
+
+const Content = styled.div`
+  width: 650px;
+  padding-top: 20px;
+  margin: 40px 4px 4px 4px !important;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  text-align: center;
+`;
+
+const Tr = styled.tr`
+  height: 40px;
   width: 100%;
   padding: 10px 0px;
-  display: flex;
-  justify-content: space-around;
+  & td {
+    vertical-align: middle;
+  }
   &.myRanking {
     background-color: blue;
     color: white;
   }
+  &.belowTen {
+    position: absolute;
+    bottom: -100px;
+    left: 0px;
+    display: flex;
+    padding: 10px 25px;
+  }
 `;
 
-const Index = styled.span``;
+const Index = styled.td`
+  width: 5%;
+`;
 
-const Name = styled.span``;
+const Name = styled.td`
+  width: 45%;
+`;
 
-const Kpm = styled.span`
+const Kpm = styled.td`
+  width: 25%;
   &:before {
     content: "타속";
     padding: 5px 7px;
@@ -50,7 +76,8 @@ const Kpm = styled.span`
   }
 `;
 
-const Accuracy = styled.span`
+const Accuracy = styled.td`
+  width: 25%;
   &:before {
     content: "정확도";
     padding: 5px 7px;
@@ -120,23 +147,39 @@ class Ranking extends Component<IProps, IState> {
   render() {
     return (
       <Container>
-        <Title>{this.state.title}</Title>
-        <Writer>{this.state.writer}</Writer>
-        <STitle>명예의 전당</STitle>
-        <RankingUl>
-          {this.state.records.map((ranking, index) => (
-            <RankingLi
-              className={
-                this.state.myRanking === ranking._id ? "myRanking" : ""
-              }
-            >
-              <Index>{index + 1}</Index>
-              <Name>{ranking.creator}</Name>
-              <Kpm>{ranking.kpm}</Kpm>
-              <Accuracy>{ranking.accuracy}</Accuracy>
-            </RankingLi>
-          ))}
-        </RankingUl>
+        <STitle>
+          <i className="nes-icon trophy is-medium" />
+          명예의 전당
+          <i className="nes-icon trophy is-medium" />
+        </STitle>
+        <Content className="nes-container with-title is-centered is-rounded">
+          <Title className="title">{this.state.title}</Title>
+          <Table>
+            {this.state.records.map((ranking, index) =>
+              index < 10 ? (
+                <Tr
+                  className={
+                    this.state.myRanking === ranking._id ? "myRanking" : ""
+                  }
+                >
+                  <Index>{index + 1}</Index>
+                  <Name>{ranking.creator}</Name>
+                  <Kpm>{ranking.kpm}</Kpm>
+                  <Accuracy>{ranking.accuracy}</Accuracy>
+                </Tr>
+              ) : this.state.myRanking === ranking._id ? (
+                <Tr className="myRanking belowTen">
+                  <Index>{index + 1}</Index>
+                  <Name>{ranking.creator}</Name>
+                  <Kpm>{ranking.kpm}</Kpm>
+                  <Accuracy>{ranking.accuracy}</Accuracy>
+                </Tr>
+              ) : (
+                ""
+              )
+            )}
+          </Table>
+        </Content>
       </Container>
     );
   }
