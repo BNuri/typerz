@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { recordApi, quoteApi } from "../api";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { StaticContext } from "react-router";
+import Loading from "./Loading";
 
 const Container = styled.main`
   width: 100%;
@@ -101,6 +102,7 @@ interface IState {
   writer: string;
   myRanking: string;
   records: { _id: string; creator: string; kpm: number; accuracy: number }[];
+  loading: boolean;
 }
 
 class Ranking extends Component<IProps, IState> {
@@ -110,7 +112,8 @@ class Ranking extends Component<IProps, IState> {
       title: "",
       writer: "",
       myRanking: "",
-      records: []
+      records: [],
+      loading: true
     };
   }
 
@@ -140,12 +143,20 @@ class Ranking extends Component<IProps, IState> {
     } catch (error) {
       console.warn(error);
     } finally {
-      this.setState({ title, writer, myRanking: mine, records });
+      this.setState({
+        title,
+        writer,
+        myRanking: mine,
+        records,
+        loading: false
+      });
     }
   }
 
   render() {
-    return (
+    return this.state.loading ? (
+      <Loading />
+    ) : (
       <Container>
         <STitle>
           <i className="nes-icon trophy is-medium" />

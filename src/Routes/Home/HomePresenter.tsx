@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
+import Loading from "../../Components/Loading";
 
 const Container = styled.div`
   width: 100%;
@@ -60,52 +61,57 @@ const Quote = styled.li`
 interface IProps {
   quotes: { _id: string; title: string }[];
   isTest: boolean;
+  loading: boolean;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const HomePresenter: React.FunctionComponent<IProps> = ({
   quotes,
   isTest,
+  loading,
   changeHandler
-}) => (
-  <Container>
-    <CheckContainer className="nes-container is-rounded">
-      <Label>
-        <Input
-          type="radio"
-          className="nes-radio"
-          name="radio"
-          value="practice"
-          onChange={changeHandler}
-          checked={isTest === false}
-        />
-        <span>타자 연습</span>
-      </Label>
-      <Label>
-        <Input
-          type="radio"
-          className="nes-radio"
-          name="radio"
-          value="test"
-          onChange={changeHandler}
-          checked={isTest === true}
-        />
-        <span>타자 검정</span>
-      </Label>
-    </CheckContainer>
-    <Quotes className="nes-container is-rounded">
-      {quotes.map(quote => (
-        <Link
-          to={`/${isTest ? "test" : "practice"}/${quote._id}`}
-          key={quote._id}
-        >
-          <Quote key={quote._id}>
-            {quote.title.length > 20 ? quote.title + "..." : quote.title}
-          </Quote>
-        </Link>
-      ))}
-    </Quotes>
-  </Container>
-);
+}) =>
+  loading ? (
+    <Loading />
+  ) : (
+    <Container>
+      <CheckContainer className="nes-container is-rounded">
+        <Label>
+          <Input
+            type="radio"
+            className="nes-radio"
+            name="radio"
+            value="practice"
+            onChange={changeHandler}
+            checked={isTest === false}
+          />
+          <span>타자 연습</span>
+        </Label>
+        <Label>
+          <Input
+            type="radio"
+            className="nes-radio"
+            name="radio"
+            value="test"
+            onChange={changeHandler}
+            checked={isTest === true}
+          />
+          <span>타자 검정</span>
+        </Label>
+      </CheckContainer>
+      <Quotes className="nes-container is-rounded">
+        {quotes.map(quote => (
+          <Link
+            to={`/${isTest ? "test" : "practice"}/${quote._id}`}
+            key={quote._id}
+          >
+            <Quote key={quote._id}>
+              {quote.title.length > 20 ? quote.title + "..." : quote.title}
+            </Quote>
+          </Link>
+        ))}
+      </Quotes>
+    </Container>
+  );
 
 export default HomePresenter;

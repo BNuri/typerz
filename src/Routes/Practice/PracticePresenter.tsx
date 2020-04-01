@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ModalPortal from "../../Components/ModalPortal";
 import Modal from "../../Components/Modal";
 import Practice from "../../Components/Practice";
+import Loading from "../../Components/Loading";
 
 const Container = styled.div`
   width: 100%;
@@ -39,6 +40,7 @@ interface IPractice {
   displayQuotes: string[];
   refs: HTMLInputElement[];
   modal: boolean;
+  loading: boolean;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -58,47 +60,51 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   displayQuotes,
   refs,
   modal,
+  loading,
   keyDownHandler,
   keyPressHandler,
   keyUpHandler,
   changeHandler,
   closeModal,
   submitHandler
-}) => (
-  <Container>
-    <H1>{isTest ? "타자 검정" : "타자 연습"}</H1>
-    <QuoteContainer className="nes-container with-title is-rounded is-centered">
-      <Title className="title">
-        {result.writer ? result.title + " - " + result.writer : result.title}
-      </Title>
-      <Practice
-        typeCnt={typeCnt}
-        typeWrong={typeWrong}
-        isTest={isTest}
-        pageNum={pageNum}
-        pageTotal={pageTotal}
-        time={time}
-        displayQuotes={displayQuotes}
-        refs={refs}
-        keyDownHandler={keyDownHandler}
-        keyPressHandler={keyPressHandler}
-        keyUpHandler={keyUpHandler}
-        changeHandler={changeHandler}
-      />
-    </QuoteContainer>
-    {modal && (
-      <ModalPortal>
-        <Modal
-          closeModal={closeModal}
-          isTest={isTest}
-          time={time}
+}) =>
+  loading ? (
+    <Loading />
+  ) : (
+    <Container>
+      <H1>{isTest ? "타자 검정" : "타자 연습"}</H1>
+      <QuoteContainer className="nes-container with-title is-rounded is-centered">
+        <Title className="title">
+          {result.writer ? result.title + " - " + result.writer : result.title}
+        </Title>
+        <Practice
           typeCnt={typeCnt}
           typeWrong={typeWrong}
-          submitHandler={submitHandler}
+          isTest={isTest}
+          pageNum={pageNum}
+          pageTotal={pageTotal}
+          time={time}
+          displayQuotes={displayQuotes}
+          refs={refs}
+          keyDownHandler={keyDownHandler}
+          keyPressHandler={keyPressHandler}
+          keyUpHandler={keyUpHandler}
+          changeHandler={changeHandler}
         />
-      </ModalPortal>
-    )}
-  </Container>
-);
+      </QuoteContainer>
+      {modal && (
+        <ModalPortal>
+          <Modal
+            closeModal={closeModal}
+            isTest={isTest}
+            time={time}
+            typeCnt={typeCnt}
+            typeWrong={typeWrong}
+            submitHandler={submitHandler}
+          />
+        </ModalPortal>
+      )}
+    </Container>
+  );
 
 export default PracticePresenter;

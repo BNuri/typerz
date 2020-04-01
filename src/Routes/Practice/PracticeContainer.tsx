@@ -68,6 +68,7 @@ interface IState {
   refs: HTMLInputElement[];
   inputIndex: number;
   modal: boolean;
+  loading: boolean;
 }
 
 class PracticeContainer extends Component<IProps, IState> {
@@ -93,7 +94,8 @@ class PracticeContainer extends Component<IProps, IState> {
       displayQuotes: [],
       refs: [],
       inputIndex: 0,
-      modal: false
+      modal: false,
+      loading: true
     };
   }
 
@@ -104,13 +106,6 @@ class PracticeContainer extends Component<IProps, IState> {
     } = this.state;
     const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
     this.setState({ displayQuotes, pageNum: this.state.pageNum + 1 });
-  };
-
-  createFocuser = () => {
-    const focuserId = setInterval(() => {
-      this.state.refs[this.state.inputIndex].focus();
-    }, 1000);
-    this.setState({ focuser: focuserId });
   };
 
   async componentDidMount() {
@@ -139,10 +134,10 @@ class PracticeContainer extends Component<IProps, IState> {
         result,
         pageTotal,
         endInputIndex,
+        loading: false,
         time: isTest ? 300 : 0
       });
       this.sliceCurrentQuotes();
-      this.createFocuser();
     }
   }
 
@@ -162,7 +157,8 @@ class PracticeContainer extends Component<IProps, IState> {
       displayQuotes,
       refs,
       time,
-      modal
+      modal,
+      loading
     } = this.state;
     return (
       <PracticePresenter
@@ -182,6 +178,7 @@ class PracticeContainer extends Component<IProps, IState> {
         changeHandler={this.changeHandler}
         closeModal={this.closeModal}
         submitHandler={this.submitHandler}
+        loading={loading}
       />
     );
   }
@@ -215,6 +212,13 @@ class PracticeContainer extends Component<IProps, IState> {
     }
   };
 
+  createFocuser = () => {
+    const focuserId = setInterval(() => {
+      this.state.refs[this.state.inputIndex].focus();
+    }, 1000);
+    this.setState({ focuser: focuserId });
+  };
+
   createTimer = () => {
     const timerId = setInterval(() => {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
@@ -225,6 +229,7 @@ class PracticeContainer extends Component<IProps, IState> {
     if (this.state.isTest) {
       setTimeout(this.stopTyping, 300000);
     }
+    this.createFocuser();
   };
 
   stopTimer = () => {
