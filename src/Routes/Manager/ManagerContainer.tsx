@@ -1,26 +1,33 @@
 import React, { Component } from "react";
 import ManagerPresenter from "./ManagerPresenter";
 import { quoteApi } from "../../api";
+import { RouteComponentProps } from "react-router-dom";
+
+interface IProps extends RouteComponentProps<any> {}
 
 interface IState {
   title: string;
   writer: string;
   quote: string;
+  loading: boolean;
 }
 
-class ManagerContainer extends Component<IState> {
+class ManagerContainer extends Component<IProps, IState> {
   state: IState = {
     title: "",
     writer: "",
-    quote: ""
+    quote: "",
+    loading: false
   };
 
   render() {
+    const { title, writer, quote, loading } = this.state;
     return (
       <ManagerPresenter
-        title={this.state.title}
-        writer={this.state.writer}
-        quote={this.state.quote}
+        title={title}
+        writer={writer}
+        quote={quote}
+        loading={loading}
         onInputChange={this.onInputChange}
         onTextareaChange={this.onTextareaChange}
         onFormSubmit={this.onFormSubmit}
@@ -29,7 +36,7 @@ class ManagerContainer extends Component<IState> {
   }
 
   onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ [event.target.name]: event.target.value } as any);
   };
 
   onTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -43,14 +50,16 @@ class ManagerContainer extends Component<IState> {
   };
 
   saveQuote = async () => {
+    this.setState({ loading: true });
     const { title, writer, quote } = this.state;
     const newQuote = { title, writer, quote };
     try {
-      const data = await quoteApi.createQuote(newQuote);
-      console.log(data);
+      await quoteApi.createQuote(newQuote);
     } catch (error) {
       console.warn(error);
     } finally {
+      this.setState({ loading: false });
+      this.props.history.push({ pathname: "/home" });
     }
   };
 }
