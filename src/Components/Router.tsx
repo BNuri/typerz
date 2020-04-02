@@ -10,6 +10,7 @@ import Home from "../Routes/Home";
 import Practice from "../Routes/Practice";
 import Manager from "../Routes/Manager";
 import Ranking from "./Ranking";
+import Footer from "./Footer";
 
 export default () => (
   <Router>
@@ -23,6 +24,7 @@ export default () => (
         <Route path="/manager" exact component={Manager} />
         <Redirect from={"*"} to={"/"} />
       </Switch>
+      <Footer />
     </>
   </Router>
 );
