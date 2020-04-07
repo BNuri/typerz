@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Loading from "../../Components/Loading";
+import Title from "../../Components/Title";
 
 const Container = styled.div`
   width: 100%;
@@ -8,11 +9,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const H1 = styled.h1`
-  font-size: 22px;
-  padding-bottom: 30px;
 `;
 
 const Field = styled.div`
@@ -35,7 +31,7 @@ const Form = styled.form`
   flex-direction: column;
 `;
 
-const Title = styled.input``;
+const QTitle = styled.input``;
 
 const Writer = styled.input``;
 
@@ -70,13 +66,13 @@ const ManagerPresenter: React.FunctionComponent<IManager> = ({
     <Loading />
   ) : (
     <Container>
-      <H1>문장 추가하기</H1>
+      <Title title="문장 추가하기" />
       <Form onSubmit={onFormSubmit}>
         <Field className="nes-field">
           <Label htmlFor="title">
             제목<Required>*</Required>
           </Label>
-          <Title
+          <QTitle
             type="text"
             id="title"
             name="title"

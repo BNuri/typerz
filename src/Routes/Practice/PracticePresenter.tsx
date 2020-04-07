@@ -4,6 +4,7 @@ import ModalPortal from "../../Components/ModalPortal";
 import Modal from "../../Components/Modal";
 import Practice from "../../Components/Practice";
 import Loading from "../../Components/Loading";
+import Title from "../../Components/Title";
 
 const Container = styled.div`
   width: 100%;
@@ -13,18 +14,13 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const H1 = styled.h1`
-  font-size: 22px;
-  padding-bottom: 50px;
-`;
-
 const QuoteContainer = styled.div`
   width: 1000px;
   height: 600px;
   text-align: left !important;
 `;
 
-const Title = styled.h1`
+const QTitle = styled.h1`
   font-size: 20px !important;
   margin: -2rem auto 1rem !important;
 `;
@@ -72,11 +68,11 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
     <Loading />
   ) : (
     <Container>
-      <H1>{isTest ? "타자 검정" : "타자 연습"}</H1>
+      <Title title={isTest ? "타자 검정" : "타자 연습"} />
       <QuoteContainer className="nes-container with-title is-rounded is-centered">
-        <Title className="title">
+        <QTitle className="title">
           {result.writer ? result.title + " - " + result.writer : result.title}
-        </Title>
+        </QTitle>
         <Practice
           typeCnt={typeCnt}
           typeWrong={typeWrong}
