@@ -14,7 +14,7 @@ const Container = styled.main`
   align-items: center;
 `;
 
-const TitleContainer = styled.div`
+const TitleContainer = styled.header`
   display: flex;
   h1 {
     padding: 0 !important;
@@ -26,7 +26,7 @@ const QTitle = styled.h2`
   margin: -2rem auto 1rem !important;
 `;
 
-const Content = styled.div`
+const Content = styled.section`
   width: 650px;
   padding-top: 20px;
   margin: 40px 4px 4px 4px !important;

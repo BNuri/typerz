@@ -6,7 +6,7 @@ import Practice from "../../Components/Practice";
 import Loading from "../../Components/Loading";
 import Title from "../../Components/Title";
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
   padding: 10px;
   display: flex;
@@ -14,13 +14,13 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const QuoteContainer = styled.div`
+const QuoteContainer = styled.section`
   width: 1000px;
   height: 600px;
   text-align: left !important;
 `;
 
-const QTitle = styled.h1`
+const QTitle = styled.h2`
   font-size: 20px !important;
   margin: -2rem auto 1rem !important;
 `;

@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { Link } from "react-router-dom";
 import img from "../assets/images/logo.png";
 
@@ -11,12 +11,10 @@ const Container = styled.header`
   font-size: 24px;
 `;
 
-const Logo = styled.div`
+const Logo = styled.img`
   margin-right: 10px;
   height: 100px;
   width: 100px;
-  background-image: url(${img});
-  background-size: cover;
   &:active {
     transform: translateY(3px);
   }
@@ -25,9 +23,11 @@ const Logo = styled.div`
 const Header: React.FunctionComponent = () => (
   <Container>
     <Link to="/">
-      <Logo />
+      <Logo src={img} alt="타이퍼즈" />
     </Link>
-    <Link to="/manager">문장 추가하기</Link>
+    <Link to="/manager" title="문장 추가">
+      문장 추가하기
+    </Link>
   </Container>
 );
 

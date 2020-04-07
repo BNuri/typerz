@@ -1,17 +1,27 @@
 import React from "react";
 import styled from "styled-components";
 
-const Container = styled.div`
+const Container = styled.footer`
   width: 100%;
   position: fixed;
   bottom: 10px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
   opacity: 0.5;
   font-size: 16px;
 `;
 
+const Address = styled.address`
+  margin-left: 5px;
+`;
+
 const Footer: React.FunctionComponent = () => (
-  <Container>ⓒ 2020 by BNURI | luckmon05@naver.com</Container>
+  <Container>
+    <span>ⓒ {new Date().getFullYear()} by BNURI | </span>
+    <Address>
+      <a href="mailto:luckmon05@naver.com">luckmon05@naver.com</a>
+    </Address>
+  </Container>
 );
 
 export default Footer;

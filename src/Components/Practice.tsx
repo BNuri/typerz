@@ -51,7 +51,7 @@ const Input = styled.input`
   border: none;
 `;
 
-const Page = styled.span``;
+const Page = styled.div``;
 
 const PreventClick = styled.div`
   z-index: 1;

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Loading from "../../Components/Loading";
 import Title from "../../Components/Title";
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
   padding: 20px;
   display: flex;

@@ -5,7 +5,7 @@ import {
   Redirect,
   Switch
 } from "react-router-dom";
-import Header from "./Header";
+import Nav from "./Header";
 import Home from "../Routes/Home";
 import Practice from "../Routes/Practice";
 import Manager from "../Routes/Manager";
@@ -15,7 +15,7 @@ import Footer from "./Footer";
 export default () => (
   <Router>
     <>
-      <Header />
+      <Nav />
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/practice/:id" component={Practice} />

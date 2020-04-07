@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import Loading from "../../Components/Loading";
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
   height: calc(100vh - 100px);
   padding: 30px;
