@@ -4,6 +4,7 @@ import { recordApi, quoteApi } from "../api";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { StaticContext } from "react-router";
 import Loading from "./Loading";
+import Title from "./Title";
 
 const Container = styled.main`
   width: 100%;
@@ -13,14 +14,14 @@ const Container = styled.main`
   align-items: center;
 `;
 
-const STitle = styled.h1`
-  font-size: 22px;
-  font-weight: 700;
+const TitleContainer = styled.div`
   display: flex;
-  align-items: center;
+  h1 {
+    padding: 0 !important;
+  }
 `;
 
-const Title = styled.h2`
+const QTitle = styled.h2`
   font-size: 22px !important;
   margin: -2rem auto 1rem !important;
 `;
@@ -158,13 +159,13 @@ class Ranking extends Component<IProps, IState> {
       <Loading />
     ) : (
       <Container>
-        <STitle>
+        <TitleContainer>
           <i className="nes-icon trophy is-medium" />
-          명예의 전당
+          <Title title="명예의 전당" />
           <i className="nes-icon trophy is-medium" />
-        </STitle>
+        </TitleContainer>
         <Content className="nes-container with-title is-centered is-rounded">
-          <Title className="title">{this.state.title}</Title>
+          <QTitle className="title">{this.state.title}</QTitle>
           <Table>
             {this.state.records.map((ranking, index) =>
               index < 10 ? (

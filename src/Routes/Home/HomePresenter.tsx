@@ -25,8 +25,9 @@ const Input = styled.input``;
 
 const Quotes = styled.ul`
   width: 500px;
-  max-length: 500px;
+  max-height: 500px;
   margin: 50px 4px 4px 4px !important;
+  overflow-y: auto;
 `;
 
 const blink = keyframes`
@@ -100,16 +101,17 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
         </Label>
       </CheckContainer>
       <Quotes className="nes-container is-rounded">
-        {quotes.map(quote => (
-          <Link
-            to={`/${isTest ? "test" : "practice"}/${quote._id}`}
-            key={quote._id}
-          >
-            <Quote key={quote._id}>
-              {quote.title.length > 20 ? quote.title + "..." : quote.title}
-            </Quote>
-          </Link>
-        ))}
+        {quotes &&
+          quotes.map(quote => (
+            <Link
+              to={`/${isTest ? "test" : "practice"}/${quote._id}`}
+              key={quote._id}
+            >
+              <Quote key={quote._id}>
+                {quote.title.length > 20 ? quote.title + "..." : quote.title}
+              </Quote>
+            </Link>
+          ))}
       </Quotes>
     </Container>
   );

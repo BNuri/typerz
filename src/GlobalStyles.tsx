@@ -1,7 +1,16 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, keyframes } from "styled-components";
 import reset from "styled-reset";
 import Fonts from "./assets/fonts";
 import theme from "./theme";
+
+const fadeIn = keyframes`
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+`;
 
 const globalStyle = createGlobalStyle`
     ${reset}
@@ -32,6 +41,9 @@ const globalStyle = createGlobalStyle`
         &:focus, &:active { 
             outline: none; 
         } 
+    }
+    .App > div {
+        animation: 0.3s ${fadeIn} linear;
     }
 `;
 

@@ -11,7 +11,7 @@ const Container = styled.div`
 `;
 
 const Footer: React.FunctionComponent = () => (
-  <Container>ⓒ 2020 by BNURI | 문의: luckmon05@naver.com</Container>
+  <Container>ⓒ 2020 by BNURI | luckmon05@naver.com</Container>
 );
 
 export default Footer;

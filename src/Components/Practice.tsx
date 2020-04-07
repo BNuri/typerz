@@ -6,10 +6,9 @@ import Accuracy from "./Accuracy";
 
 const Container = styled.div`
   height: 100%;
-  padding-top: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
@@ -20,7 +19,7 @@ const NumberContainer = styled.div`
 `;
 
 const Quotes = styled.div`
-  width: 800px;
+  width: 850px;
   height: 400px;
 `;
 

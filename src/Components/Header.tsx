@@ -1,6 +1,7 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
+import img from "../assets/images/logo.png";
 
 const Container = styled.header`
   height: 100px;
@@ -10,12 +11,21 @@ const Container = styled.header`
   font-size: 24px;
 `;
 
-const Title = styled.h1``;
+const Logo = styled.div`
+  margin-right: 10px;
+  height: 100px;
+  width: 100px;
+  background-image: url(${img});
+  background-size: cover;
+  &:active {
+    transform: translateY(3px);
+  }
+`;
 
 const Header: React.FunctionComponent = () => (
   <Container>
     <Link to="/">
-      <Title>Welcome to TyperZ!</Title>
+      <Logo />
     </Link>
     <Link to="/manager">문장 추가하기</Link>
   </Container>
