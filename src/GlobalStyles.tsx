@@ -42,7 +42,7 @@ const globalStyle = createGlobalStyle`
             outline: none; 
         } 
     }
-    .App > div {
+    .App > main {
         animation: 0.3s ${fadeIn} linear;
     }
 `;
