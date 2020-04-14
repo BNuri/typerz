@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import ModalPortal from "../../Components/ModalPortal";
-import Modal from "../../Components/Modal";
+import ModalPortal from "../../Components/modal/ModalPortal";
+import Modal from "../../Components/modal/Modal";
 import Practice from "../../Components/Practice";
 import Loading from "../../Components/Loading";
 import Title from "../../Components/Title";
@@ -37,6 +37,7 @@ interface IPractice {
   refs: HTMLInputElement[];
   modal: boolean;
   loading: boolean;
+  loader: boolean;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -57,12 +58,13 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   refs,
   modal,
   loading,
+  loader,
   keyDownHandler,
   keyPressHandler,
   keyUpHandler,
   changeHandler,
   closeModal,
-  submitHandler
+  submitHandler,
 }) =>
   loading ? (
     <Loading />
@@ -96,6 +98,7 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
             time={time}
             typeCnt={typeCnt}
             typeWrong={typeWrong}
+            loader={loader}
             submitHandler={submitHandler}
           />
         </ModalPortal>

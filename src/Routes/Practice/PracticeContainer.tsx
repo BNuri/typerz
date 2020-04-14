@@ -22,7 +22,7 @@ const PREVENT_KEYS = [
   45,
   46,
   91,
-  92
+  92,
 ];
 
 const NO_COUNT_KEYS = [
@@ -45,7 +45,7 @@ const NO_COUNT_KEYS = [
   122,
   123,
   144,
-  145
+  145,
 ];
 
 interface IProps extends RouteComponentProps<any> {}
@@ -69,13 +69,14 @@ interface IState {
   inputIndex: number;
   modal: boolean;
   loading: boolean;
+  loader: boolean;
 }
 
 class PracticeContainer extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     const {
-      location: { pathname }
+      location: { pathname },
     } = this.props;
     this.state = {
       typeCnt: 0,
@@ -95,14 +96,15 @@ class PracticeContainer extends Component<IProps, IState> {
       refs: [],
       inputIndex: 0,
       modal: false,
-      loading: true
+      loading: true,
+      loader: false,
     };
   }
 
   sliceCurrentQuotes = () => {
     const {
       result: { quote },
-      pageNum
+      pageNum,
     } = this.state;
     const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
     this.setState({ displayQuotes, pageNum: this.state.pageNum + 1 });
@@ -111,9 +113,9 @@ class PracticeContainer extends Component<IProps, IState> {
   async componentDidMount() {
     const {
       match: {
-        params: { id }
+        params: { id },
       },
-      history: { push }
+      history: { push },
     } = this.props;
     const { isTest } = this.state;
     if (id.isNull) {
@@ -135,7 +137,7 @@ class PracticeContainer extends Component<IProps, IState> {
         pageTotal,
         endInputIndex,
         loading: false,
-        time: isTest ? 300 : 0
+        time: isTest ? 300 : 0,
       });
       this.sliceCurrentQuotes();
     }
@@ -158,7 +160,8 @@ class PracticeContainer extends Component<IProps, IState> {
       refs,
       time,
       modal,
-      loading
+      loading,
+      loader,
     } = this.state;
     return (
       <PracticePresenter
@@ -179,6 +182,7 @@ class PracticeContainer extends Component<IProps, IState> {
         closeModal={this.closeModal}
         submitHandler={this.submitHandler}
         loading={loading}
+        loader={loader}
       />
     );
   }
@@ -192,13 +196,13 @@ class PracticeContainer extends Component<IProps, IState> {
 
   goNextPage = () => {
     this.sliceCurrentQuotes();
-    this.state.refs.map(ref => (ref.value = ""));
+    this.state.refs.map((ref) => (ref.value = ""));
     console.log(this.state.refs);
     this.state.refs[0].focus();
     this.setState({ inputIndex: 0, currentIndex: 0 });
     document
       .querySelectorAll(".wrong")
-      .forEach(span => span.classList.remove("wrong"));
+      .forEach((span) => span.classList.remove("wrong"));
   };
 
   goNextStep = () => {
@@ -224,7 +228,7 @@ class PracticeContainer extends Component<IProps, IState> {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
     }, 1000);
     this.setState({
-      timer: timerId
+      timer: timerId,
     });
     if (this.state.isTest) {
       setTimeout(this.stopTyping, 300000);
@@ -268,7 +272,7 @@ class PracticeContainer extends Component<IProps, IState> {
   keyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const {
       which,
-      currentTarget: { maxLength, value }
+      currentTarget: { maxLength, value },
     } = event;
     if (which === 13) {
       if (maxLength === value.length) {
@@ -315,7 +319,7 @@ class PracticeContainer extends Component<IProps, IState> {
       this.setState({
         typeWrong: this.state.typeWrong.filter(
           (w, i) => i !== this.state.typeWrong.length - 1
-        )
+        ),
       });
       comSpan?.classList.remove("wrong");
     }
@@ -359,7 +363,7 @@ class PracticeContainer extends Component<IProps, IState> {
       )[0];
       this.deleteWrong(comSpan);
       this.setState({
-        currentIndex: currentValue.length - 1
+        currentIndex: currentValue.length - 1,
       });
     }
   };
@@ -378,14 +382,14 @@ class PracticeContainer extends Component<IProps, IState> {
     const newRecord = { kpm, accuracy, creator };
     const {
       match: {
-        params: { id }
-      }
+        params: { id },
+      },
     } = this.props;
     try {
       const { data: myRecord } = await recordApi.createRecords(id, newRecord);
       this.props.history.push({
         pathname: `/ranking/${id}`,
-        state: { myRanking: myRecord._id }
+        state: { myRanking: myRecord._id },
       });
     } catch (error) {
       console.warn(error);
@@ -394,6 +398,7 @@ class PracticeContainer extends Component<IProps, IState> {
 
   submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
+    this.setState({ loader: true });
     const { currentTarget } = event;
     const name = currentTarget.getElementsByTagName("input")[0].value;
     this.createRecord(name);

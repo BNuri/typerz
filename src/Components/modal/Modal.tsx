@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import theme from "../theme";
-import Speed from "./Speed";
-import Accuracy from "./Accuracy";
-import Timer from "./Timer";
+import theme from "../../theme";
+import Speed from "../Speed";
+import Accuracy from "../Accuracy";
+import Timer from "../Timer";
+import Button from "../Button";
 
 const Container = styled.div`
   height: 100%;
@@ -62,7 +63,7 @@ const Label = styled.label`
 
 const Name = styled.input``;
 
-const Button = styled.button``;
+// const Button = styled.button``;
 
 interface IProp {
   closeModal: () => void;
@@ -70,6 +71,7 @@ interface IProp {
   time: number;
   typeCnt: number;
   typeWrong: number[];
+  loader: boolean;
   submitHandler: (event: React.FormEvent) => void;
 }
 
@@ -79,7 +81,8 @@ const Modal: FunctionComponent<IProp> = ({
   time,
   typeCnt,
   typeWrong,
-  submitHandler
+  loader,
+  submitHandler,
 }) => (
   <Container>
     <Content>
@@ -106,8 +109,10 @@ const Modal: FunctionComponent<IProp> = ({
             autoFocus={true}
             id="name"
             maxLength={10}
+            required={true}
           />
-          <Button className="nes-btn is-warning">기록 저장</Button>
+          {/* <Button className="nes-btn is-warning">기록 저장</Button> */}
+          <Button loader={loader} value="기록 저장" />
         </div>
       </Form>
     </Content>
