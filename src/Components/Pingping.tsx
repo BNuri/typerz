@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import img from "../assets/images/pingping.png";
+import img from "../assets/images/loader.gif";
 
 const Container = styled.div`
   height: 120px;
