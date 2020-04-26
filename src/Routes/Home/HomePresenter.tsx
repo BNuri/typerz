@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
-import Loading from "../../Components/Loading";
+import Loading from "../../Components/Loader";
 
 const Container = styled.main`
   width: 100%;
@@ -70,7 +70,7 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
   quotes,
   isTest,
   loading,
-  changeHandler
+  changeHandler,
 }) =>
   loading ? (
     <Loading />
@@ -102,15 +102,15 @@ const HomePresenter: React.FunctionComponent<IProps> = ({
       </CheckContainer>
       <Quotes className="nes-container is-rounded">
         {quotes &&
-          quotes.map(quote => (
-            <Link
-              to={`/${isTest ? "test" : "practice"}/${quote._id}`}
-              key={quote._id}
-            >
-              <Quote key={quote._id}>
+          quotes.map((quote) => (
+            <Quote key={quote._id}>
+              <Link
+                to={`/${isTest ? "test" : "practice"}/${quote._id}`}
+                key={quote._id}
+              >
                 {quote.title.length > 20 ? quote.title + "..." : quote.title}
-              </Quote>
-            </Link>
+              </Link>
+            </Quote>
           ))}
       </Quotes>
     </Container>
