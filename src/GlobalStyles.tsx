@@ -20,6 +20,7 @@ const globalStyle = createGlobalStyle`
         src: url(${Fonts.DGMWoff2}) format('woff2'),
             url(${Fonts.DGMWoff}) format('woff'),
             url(${Fonts.DGMTtf}) format('truetype');
+        font-display: swap;
     }
     *{
         box-sizing: border-box;
