@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ModalPortal from "../../Components/modal/ModalPortal";
 import Modal from "../../Components/modal/Modal";
 import Practice from "../../Components/Practice";
-import Loading from "../../Components/Loading";
+import Loader from "../../Components/Loader";
 import Title from "../../Components/Title";
 
 const Container = styled.main`
@@ -67,7 +67,7 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   submitHandler,
 }) =>
   loading ? (
-    <Loading />
+    <Loader />
   ) : (
     <Container>
       <Title title={isTest ? "타자 검정" : "타자 연습"} />

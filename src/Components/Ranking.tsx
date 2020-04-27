@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { recordApi, quoteApi } from "../api";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { StaticContext } from "react-router";
-import Loading from "./Loading";
+import Loader from "./Loader";
 import Title from "./Title";
 
 const Container = styled.main`
@@ -114,16 +114,16 @@ class Ranking extends Component<IProps, IState> {
       writer: "",
       myRanking: "",
       records: [],
-      loading: true
+      loading: true,
     };
   }
 
   async componentDidMount() {
     const {
       match: {
-        params: { id }
+        params: { id },
       },
-      history: { push }
+      history: { push },
     } = this.props;
     if (!id) {
       return push("/");
@@ -138,7 +138,7 @@ class Ranking extends Component<IProps, IState> {
       writer = quote.writer;
       ({ data: records } = await recordApi.getRecordsById(id));
       const {
-        location: { state }
+        location: { state },
       } = this.props;
       mine = state.myRanking ? state.myRanking : "";
     } catch (error) {
@@ -149,14 +149,14 @@ class Ranking extends Component<IProps, IState> {
         writer,
         myRanking: mine,
         records,
-        loading: false
+        loading: false,
       });
     }
   }
 
   render() {
     return this.state.loading ? (
-      <Loading />
+      <Loader />
     ) : (
       <Container>
         <TitleContainer>

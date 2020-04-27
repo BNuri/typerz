@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Loading from "../../Components/Loading";
+import Loader from "../../Components/Loader";
 import Title from "../../Components/Title";
 
 const Container = styled.main`
@@ -60,10 +60,10 @@ const ManagerPresenter: React.FunctionComponent<IManager> = ({
   loading,
   onInputChange,
   onTextareaChange,
-  onFormSubmit
+  onFormSubmit,
 }) =>
   loading ? (
-    <Loading />
+    <Loader />
   ) : (
     <Container>
       <Title title="문장 추가하기" />

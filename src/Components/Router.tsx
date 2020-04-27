@@ -3,19 +3,19 @@ import {
   HashRouter as Router,
   Route,
   Redirect,
-  Switch
+  Switch,
 } from "react-router-dom";
-import Nav from "./Header";
+import Header from "./header/Header";
 import Home from "../Routes/Home";
 import Practice from "../Routes/Practice";
 import Manager from "../Routes/Manager";
 import Ranking from "./Ranking";
-import Footer from "./Footer";
+import Footer from "./footer/Footer";
 
 export default () => (
   <Router>
     <>
-      <Nav />
+      <Header />
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/practice/:id" component={Practice} />

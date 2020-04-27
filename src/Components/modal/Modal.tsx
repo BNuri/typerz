@@ -63,8 +63,6 @@ const Label = styled.label`
 
 const Name = styled.input``;
 
-// const Button = styled.button``;
-
 interface IProp {
   closeModal: () => void;
   isTest: boolean;
@@ -111,7 +109,6 @@ const Modal: FunctionComponent<IProp> = ({
             maxLength={10}
             required={true}
           />
-          {/* <Button className="nes-btn is-warning">기록 저장</Button> */}
           <Button loader={loader} value="기록 저장" />
         </div>
       </Form>
