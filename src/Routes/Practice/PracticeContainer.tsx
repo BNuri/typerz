@@ -176,7 +176,6 @@ class PracticeContainer extends Component<IProps, IState> {
         time={time}
         modal={modal}
         keyDownHandler={this.keyDownHandler}
-        keyPressHandler={this.keyPressHandler}
         keyUpHandler={this.keyUpHandler}
         changeHandler={this.changeHandler}
         closeModal={this.closeModal}
@@ -197,7 +196,6 @@ class PracticeContainer extends Component<IProps, IState> {
   goNextPage = () => {
     this.sliceCurrentQuotes();
     this.state.refs.map((ref) => (ref.value = ""));
-    console.log(this.state.refs);
     this.state.refs[0].focus();
     this.setState({ inputIndex: 0, currentIndex: 0 });
     document
@@ -269,18 +267,6 @@ class PracticeContainer extends Component<IProps, IState> {
     }
   };
 
-  keyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const {
-      which,
-      currentTarget: { maxLength, value },
-    } = event;
-    if (which === 13) {
-      if (maxLength === value.length) {
-        this.goNextStep();
-      }
-    }
-  };
-
   getStroke = (kor?: string) => {
     if (!kor) return 0;
     const uni: number = kor.charCodeAt(0);
@@ -336,9 +322,7 @@ class PracticeContainer extends Component<IProps, IState> {
         )[0];
         this.isWrong(currentValue, compareIndex, comSpan);
         this.setState({ currentIndex: 0, currentValue: "" });
-        if (event.keyCode === 32) {
-          this.goNextStep();
-        }
+        this.goNextStep();
       }
     } else if (event.keyCode === 27) {
       //****************************************지울것

@@ -71,7 +71,6 @@ interface IProp {
   displayQuotes: string[];
   refs: HTMLInputElement[];
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -86,9 +85,8 @@ const Practice: React.FunctionComponent<IProp> = ({
   displayQuotes,
   refs,
   keyDownHandler,
-  keyPressHandler,
   keyUpHandler,
-  changeHandler
+  changeHandler,
 }) => (
   <Container>
     <NumberContainer>
@@ -119,13 +117,12 @@ const Practice: React.FunctionComponent<IProp> = ({
             type="text"
             maxLength={q.length}
             onKeyDown={keyDownHandler}
-            onKeyPress={keyPressHandler}
             onKeyUp={keyUpHandler}
             onChange={changeHandler}
-            onPaste={event => {
+            onPaste={(event) => {
               event.preventDefault();
             }}
-            ref={ref => (refs[index] = ref!)}
+            ref={(ref) => (refs[index] = ref!)}
             autoFocus={index === 0 ? true : false}
             spellCheck="false"
           ></Input>

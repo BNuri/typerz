@@ -39,7 +39,6 @@ interface IPractice {
   loading: boolean;
   loader: boolean;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  keyPressHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   closeModal: () => void;
@@ -60,7 +59,6 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   loading,
   loader,
   keyDownHandler,
-  keyPressHandler,
   keyUpHandler,
   changeHandler,
   closeModal,
@@ -85,7 +83,6 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
           displayQuotes={displayQuotes}
           refs={refs}
           keyDownHandler={keyDownHandler}
-          keyPressHandler={keyPressHandler}
           keyUpHandler={keyUpHandler}
           changeHandler={changeHandler}
         />
