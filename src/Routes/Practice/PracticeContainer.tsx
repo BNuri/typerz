@@ -215,14 +215,14 @@ class PracticeContainer extends Component<IProps, IState> {
   };
 
   createFocuser = () => {
-    const focuserId = setInterval(() => {
+    const focuserId = window.setInterval(() => {
       this.state.refs[this.state.inputIndex].focus();
     }, 1000);
     this.setState({ focuser: focuserId });
   };
 
   createTimer = () => {
-    const timerId = setInterval(() => {
+    const timerId = window.setInterval(() => {
       this.setState({ time: this.state.time + (this.state.isTest ? -1 : 1) });
     }, 1000);
     this.setState({
