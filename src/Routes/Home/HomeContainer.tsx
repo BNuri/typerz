@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import HomePresenter from "./HomePresenter";
 import { quoteApi } from "../../api";
 import { RouteComponentProps } from "react-router-dom";
@@ -11,43 +11,35 @@ interface IState {
   loading: boolean;
 }
 
-class HomeContainer extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      quotes: [],
-      isTest: false,
-      loading: true
-    };
-  }
+const HomeContainer: React.FunctionComponent<IProps> = () => {
+  const [state, setState] = useState<IState>({
+    quotes: [],
+    isTest: false,
+    loading: true
+  });
 
-  async componentDidMount() {
-    let quotes;
-    try {
-      ({ data: quotes } = await quoteApi.getQuotes());
-    } catch (error) {
-      console.warn(error);
-    } finally {
-      this.setState({ quotes, loading: false });
-    }
-  }
-
-  changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    this.setState({ isTest: value === "test" ? true : false });
-  };
-
-  render() {
-    const { quotes, isTest, loading } = this.state;
-    return (
-      <HomePresenter
-        quotes={quotes}
-        isTest={isTest}
-        loading={loading}
-        changeHandler={this.changeHandler}
-      />
-    );
+    setState({ ...state, isTest: value === "test" ? true : false });
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: quotes } = await quoteApi.getQuotes();
+      setState({ ...state, quotes, loading: false });
+    }
+    fetchData();
+  }, [state]);
+
+
+  return (
+    <HomePresenter
+      quotes={state.quotes}
+      isTest={state.isTest}
+      loading={state.loading}
+      changeHandler={changeHandler}
+    />
+  );
 }
 
 export default HomeContainer;
