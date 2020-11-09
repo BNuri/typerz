@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PracticePresenter from "./PracticePresenter";
 import { useLocation, useHistory, useParams } from "react-router-dom";
 import { quoteApi, recordApi } from "../../api";
@@ -63,6 +63,7 @@ interface IState {
   focuser: number;
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
+  userQuotes: string[];
   refs: HTMLInputElement[];
   inputIndex: number;
   modal: boolean;
@@ -74,6 +75,7 @@ const PracticeContainer :React.FunctionComponent = () => {
   const location = useLocation();
   const history = useHistory();
   const { id } = useParams();
+  const inputEl = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<IState>({
     typeCnt: 0,
     typeWrong: [],
@@ -89,6 +91,7 @@ const PracticeContainer :React.FunctionComponent = () => {
     focuser: 0,
     result: { title: "", writer: "", quote: [] },
     displayQuotes: [],
+    userQuotes: [],
     refs: [],
     inputIndex: 0,
     modal: false,
@@ -146,14 +149,14 @@ const PracticeContainer :React.FunctionComponent = () => {
   const goNextLine = () => {
     const { inputIndex } = state;
     const nextIndex = inputIndex + 1;
-    state.refs[nextIndex].focus();
+    // state.refs[nextIndex].focus();
     setState({ ...state, inputIndex: nextIndex, currentIndex: 0 });
   };
 
   const goNextPage = () => {
     sliceCurrentQuotes();
-    state.refs.map((ref) => (ref.value = ""));
-    state.refs[0].focus();
+    // state.refs.map((ref) => (ref.value = ""));
+    // state.refs[0].focus();
     setState({ ...state, inputIndex: 0, currentIndex: 0 });
     document
       .querySelectorAll(".wrong")
@@ -173,7 +176,7 @@ const PracticeContainer :React.FunctionComponent = () => {
 
   const createFocuser = () => {
     const focuserId = window.setInterval(() => {
-      state.refs[state.inputIndex].focus();
+      inputEl.current?.focus();
     }, 1000);
     setState({ ...state, focuser: focuserId });
   };
@@ -357,7 +360,9 @@ const PracticeContainer :React.FunctionComponent = () => {
     pageTotal={state.pageTotal}
     result={state.result}
     displayQuotes={state.displayQuotes}
+    userQuotes={state.userQuotes}
     refs={state.refs}
+    inputEl={inputEl}
     time={state.time}
     modal={state.modal}
     keyDownHandler={keyDownHandler}
