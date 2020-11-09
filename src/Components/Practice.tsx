@@ -31,7 +31,7 @@ const ComQuote = styled.div`
   height: 30px;
 `;
 
-const Span = styled.span`
+const ComSpan = styled.span`
   position: relative;
   &.wrong: before {
     position: absolute;
@@ -46,9 +46,18 @@ const Span = styled.span`
   }
 `;
 
+const UserSpan = styled.span`
+  position: relative;
+  &.current: background-color: black;
+`;
+
 const Input = styled.input`
   width: 100%;
   border: none;
+`;
+
+const Input2 = styled.input`
+  opacity: 0;
 `;
 
 const Page = styled.div``;
@@ -69,7 +78,9 @@ interface IProp {
   pageTotal: number;
   time: number;
   displayQuotes: string[];
+  userQuotes: string[];
   refs: HTMLInputElement[];
+  inputEl: React.RefObject<HTMLInputElement>;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -83,7 +94,9 @@ const Practice: React.FunctionComponent<IProp> = ({
   isTest,
   time,
   displayQuotes,
+  userQuotes,
   refs,
+  inputEl,
   keyDownHandler,
   keyUpHandler,
   changeHandler,
@@ -106,14 +119,17 @@ const Practice: React.FunctionComponent<IProp> = ({
             {q && q.length > 0 ? (
               q
                 .split("")
-                .map((word, index) => (
-                  <Span className={`c${index}`}>{word}</Span>
+                .map((word, i) => (
+                  <>
+                    <ComSpan className={`c${i}`}>{word}</ComSpan>
+                    <UserSpan className={`u${i}`}>{userQuotes[index] && userQuotes[index][i] && userQuotes[index][i]}</UserSpan>
+                  </>
                 ))
             ) : (
-              <Span>↵</Span>
+              <ComSpan>↵</ComSpan>
             )}
           </ComQuote>
-          <Input
+          {/* <Input
             type="text"
             maxLength={q.length}
             onKeyDown={keyDownHandler}
@@ -125,7 +141,7 @@ const Practice: React.FunctionComponent<IProp> = ({
             ref={(ref) => (refs[index] = ref!)}
             autoFocus={index === 0 ? true : false}
             spellCheck="false"
-          ></Input>
+          ></Input> */}
         </Quote>
       ))}
     </Quotes>
@@ -133,6 +149,18 @@ const Practice: React.FunctionComponent<IProp> = ({
       {pageNum} / {pageTotal}
     </Page>
     <PreventClick />
+    <Input2 
+      type="text" 
+      onKeyDown={keyDownHandler}
+      onKeyUp={keyUpHandler}
+      onChange={changeHandler}
+      onPaste={(event) => {
+        event.preventDefault();
+      }}
+      autoFocus={true}
+      spellCheck="false"
+      ref={inputEl}
+      />
   </Container>
 );
 
