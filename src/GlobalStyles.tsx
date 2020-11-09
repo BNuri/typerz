@@ -44,7 +44,7 @@ const globalStyle = createGlobalStyle`
         } 
     }
     .App > main {
-        animation: 0.3s ${fadeIn} linear;
+        animation: 0.1s ${fadeIn} linear;
     }
 `;
 

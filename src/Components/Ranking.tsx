@@ -5,6 +5,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { StaticContext } from "react-router";
 import Loader from "./Loader";
 import Title from "./Title";
+import Fireworks from "./Fireworks";
 
 const Container = styled.main`
   width: 100%;
@@ -89,6 +90,15 @@ const Accuracy = styled.td`
     border-radius: 20px;
     font-size: 16px;
   }
+`;
+
+const Congrat = styled.article`
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
 `;
 
 interface IProps
@@ -192,6 +202,10 @@ class Ranking extends Component<IProps, IState> {
             )}
           </Table>
         </Content>
+        <Congrat>
+          <Fireworks />
+          <Fireworks />
+        </Congrat>
       </Container>
     );
   }
