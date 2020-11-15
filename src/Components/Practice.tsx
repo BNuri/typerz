@@ -24,15 +24,21 @@ const Quotes = styled.div`
 `;
 
 const Quote = styled.div`
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 30px;
   margin-top: 30px;
 `;
 
-const ComQuote = styled.div`
+const Char = styled.div`
+  position: relative;
   height: 30px;
+  width: 20px;
 `;
 
 const ComSpan = styled.span`
-  position: relative;
+  position: relatvie;
   &.wrong: before {
     position: absolute;
     top: -15px;
@@ -46,14 +52,15 @@ const ComSpan = styled.span`
   }
 `;
 
-const UserSpan = styled.span`
-  position: relative;
-  &.current: background-color: black;
-`;
 
-const Input = styled.input`
-  width: 100%;
-  border: none;
+const UserSpan = styled.span`
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  &.current { 
+    background-color: black;
+    color: white;
+  }
 `;
 
 const Input2 = styled.input`
@@ -61,14 +68,6 @@ const Input2 = styled.input`
 `;
 
 const Page = styled.div``;
-
-const PreventClick = styled.div`
-  z-index: 1;
-  background-color: rgba(0, 0, 0, 0);
-  position: absolute;
-  height: 100%;
-  width: 100%;
-`;
 
 interface IProp {
   typeCnt: number;
@@ -79,8 +78,8 @@ interface IProp {
   time: number;
   displayQuotes: string[];
   userQuotes: string[];
-  refs: HTMLInputElement[];
   inputEl: React.RefObject<HTMLInputElement>;
+  inputIndex: number;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -95,8 +94,8 @@ const Practice: React.FunctionComponent<IProp> = ({
   time,
   displayQuotes,
   userQuotes,
-  refs,
   inputEl,
+  inputIndex,
   keyDownHandler,
   keyUpHandler,
   changeHandler,
@@ -114,43 +113,28 @@ const Practice: React.FunctionComponent<IProp> = ({
     </NumberContainer>
     <Quotes>
       {displayQuotes.map((q, index) => (
-        <Quote>
-          <ComQuote key={`cq${index}`}>
+          <Quote key={`cq${index}`}>
             {q && q.length > 0 ? (
               q
                 .split("")
                 .map((word, i) => (
-                  <>
-                    <ComSpan className={`c${i}`}>{word}</ComSpan>
-                    <UserSpan className={`u${i}`}>{userQuotes[index] && userQuotes[index][i] && userQuotes[index][i]}</UserSpan>
-                  </>
+                  <Char>
+                    <ComSpan className={`c${index}-${i}`}>{word}</ComSpan>
+                    <UserSpan className={`u${index}-${i}`}>{userQuotes[index] && userQuotes[index][i] && userQuotes[index][i]}</UserSpan>
+                  </Char>
                 ))
             ) : (
               <ComSpan>↵</ComSpan>
             )}
-          </ComQuote>
-          {/* <Input
-            type="text"
-            maxLength={q.length}
-            onKeyDown={keyDownHandler}
-            onKeyUp={keyUpHandler}
-            onChange={changeHandler}
-            onPaste={(event) => {
-              event.preventDefault();
-            }}
-            ref={(ref) => (refs[index] = ref!)}
-            autoFocus={index === 0 ? true : false}
-            spellCheck="false"
-          ></Input> */}
-        </Quote>
+          </Quote>
       ))}
     </Quotes>
     <Page>
       {pageNum} / {pageTotal}
     </Page>
-    <PreventClick />
     <Input2 
       type="text" 
+      maxLength={displayQuotes[inputIndex]?.length}
       onKeyDown={keyDownHandler}
       onKeyUp={keyUpHandler}
       onChange={changeHandler}

@@ -53,7 +53,6 @@ interface IState {
   typeWrong: number[];
   currentValue: string;
   currentIndex: number;
-  // currentQuote: string;
   pageNum: number;
   pageTotal: number;
   endInputIndex: number;
@@ -64,7 +63,6 @@ interface IState {
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
   userQuotes: string[];
-  refs: HTMLInputElement[];
   inputIndex: number;
   modal: boolean;
   loading: boolean;
@@ -76,13 +74,14 @@ const PracticeContainer :React.FunctionComponent = () => {
   const history = useHistory();
   const { id } = useParams();
   const inputEl = useRef<HTMLInputElement>(null);
+
   const [state, setState] = useState<IState>({
     typeCnt: 0,
     typeWrong: [],
     currentValue: "",
     currentIndex: 0,
     // currentQuote: "",
-    pageNum: 0,
+    pageNum: -1,
     pageTotal: 0,
     endInputIndex: 0,
     isTest: location.pathname.includes("/test/"),
@@ -92,12 +91,12 @@ const PracticeContainer :React.FunctionComponent = () => {
     result: { title: "", writer: "", quote: [] },
     displayQuotes: [],
     userQuotes: [],
-    refs: [],
     inputIndex: 0,
     modal: false,
     loading: true,
     loader: false,
   });
+
 
   useEffect(() => {
       const { isTest } = state;
@@ -105,26 +104,23 @@ const PracticeContainer :React.FunctionComponent = () => {
         return history.push('/');
       }
 
-      let result = null, 
+      let result: { title: "", writer: "", quote: [] }, 
         pageTotal = 0,
         endInputIndex = 0;
 
       async function getQuote(id: string) {
-        result = await quoteApi.getQuote(id);
+        ({data: result} = await quoteApi.getQuote(id));
         const { quote } = result;
         pageTotal = Math.ceil(quote.length / 5);
         endInputIndex = (quote.length % 5) - 1 < 0 ? 4 : (quote.length % 5) - 1;
-
-        setState({
+        setState(state => ({
           ...state,
           result,
           pageTotal,
           endInputIndex,
           loading: false,
           time: isTest ? 300 : 0
-        });
-
-        sliceCurrentQuotes();
+        }));
       }
 
       getQuote(id);
@@ -132,10 +128,18 @@ const PracticeContainer :React.FunctionComponent = () => {
       return () => {
         setState({ ...state, modal: false});
         stopTimer(); 
+        stopFocuser();
       }
   // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    sliceCurrentQuotes();
+  }, [state.result]);
+
+  useEffect(() => {
+    createFocuser();
+  }, []);
 
   const sliceCurrentQuotes = () => {
     const {
@@ -143,21 +147,18 @@ const PracticeContainer :React.FunctionComponent = () => {
       pageNum,
     } = state;
     const displayQuotes = quote.slice(pageNum * 5, (pageNum + 1) * 5);
-    setState({ ...state, displayQuotes, pageNum: state.pageNum + 1 });
+    setState(state => ({ ...state, displayQuotes, pageNum: state.pageNum + 1 }));
   };
 
   const goNextLine = () => {
     const { inputIndex } = state;
     const nextIndex = inputIndex + 1;
-    // state.refs[nextIndex].focus();
-    setState({ ...state, inputIndex: nextIndex, currentIndex: 0 });
+    setState(state => ({ ...state, inputIndex: nextIndex, currentIndex: 0 }));
   };
 
   const goNextPage = () => {
     sliceCurrentQuotes();
-    // state.refs.map((ref) => (ref.value = ""));
-    // state.refs[0].focus();
-    setState({ ...state, inputIndex: 0, currentIndex: 0 });
+    setState(state => ({ ...state, inputIndex: 0, currentIndex: 0, userQuotes: [] }));
     document
       .querySelectorAll(".wrong")
       .forEach((span) => span.classList.remove("wrong"));
@@ -175,33 +176,36 @@ const PracticeContainer :React.FunctionComponent = () => {
   };
 
   const createFocuser = () => {
+    console.log('createFocuser!!!!!!!');
     const focuserId = window.setInterval(() => {
       inputEl.current?.focus();
-    }, 1000);
-    setState({ ...state, focuser: focuserId });
+    }, 500);
+    setState(state => ({ ...state, focuser: focuserId }));
   };
+
+  const stopFocuser = () => {
+    clearInterval(state.focuser);
+  }
 
   const createTimer = () => {
     const timerId = window.setInterval(() => {
-      setState({ ...state, time: state.time + (state.isTest ? -1 : 1) });
+      setState(state => ({ ...state, time: state.time + (state.isTest ? -1 : 1) }));
     }, 1000);
-    setState({
+    setState(state => ({
       ...state,
       timer: timerId,
-    });
+    }));
     if (state.isTest) {
       setTimeout(stopTyping, 300000);
     }
-    createFocuser();
   };
 
   const stopTimer = () => {
     clearInterval(state.timer);
-    clearInterval(state.focuser);
   };
 
   const openModal = () => {
-    setState({ ...state, modal: true });
+    setState(state => ({ ...state, modal: true }));
   };
 
   const closeModal = () => {
@@ -210,19 +214,18 @@ const PracticeContainer :React.FunctionComponent = () => {
 
   const stopTyping = () => {
     stopTimer();
+    stopFocuser();
     openModal();
   };
 
   const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const { keyCode } = event;
-    const { value } = event.currentTarget;
     if (PREVENT_KEYS.includes(keyCode)) {
       event.preventDefault();
-      return;
+      return false;
     } else if (!NO_COUNT_KEYS.includes(keyCode)) {
-      setState({ ...state, typeCnt: state.typeCnt + 1 });
+      setState(state => ({ ...state, typeCnt: state.typeCnt + 1 }));
     }
-    setState({ ...state, currentValue: value });
     if (state.timer === 0) {
       createTimer();
     }
@@ -255,7 +258,7 @@ const PracticeContainer :React.FunctionComponent = () => {
     if (!comChar) return;
     const stroke = getStroke(comChar);
     if (comChar !== userChar && !comClass?.includes("wrong")) {
-      setState({ ...state, typeWrong: [...state.typeWrong, stroke] });
+      setState(state => ({ ...state, typeWrong: [...state.typeWrong, stroke] }));
       comSpan?.classList.add("wrong");
     }
   };
@@ -263,32 +266,40 @@ const PracticeContainer :React.FunctionComponent = () => {
   const deleteWrong = (comSpan?: Element) => {
     const comClass = comSpan?.className;
     if (comClass?.includes("wrong")) {
-      setState({
+      setState(state => ({
         ...state,
         typeWrong: state.typeWrong.filter(
           (w, i) => i !== state.typeWrong.length - 1
         ),
-      });
+      }));
       comSpan?.classList.remove("wrong");
     }
   };
 
   const keyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const { maxLength, parentElement } = event.currentTarget;
+    const { parentElement, value } = event.currentTarget;
+    const maxLength = state.displayQuotes[state.inputIndex].length;
     const { currentValue } = state;
     if (event.keyCode === 13 || event.keyCode === 32) {
       if (maxLength === currentValue.length) {
         let compareIndex = currentValue.length - 1;
         const comSpan = parentElement?.getElementsByClassName(
-          `c${compareIndex}`
+          `c${state.inputIndex}-${compareIndex}`
         )[0];
         isWrong(currentValue, compareIndex, comSpan);
-        setState({ ...state, currentIndex: 0, currentValue: "" });
+        if(inputEl && inputEl.current){
+          inputEl.current.value = "";
+        }
+        setState(state => ({ ...state, currentIndex: 0, currentValue: "" }));
         goNextStep();
       }
     } else if (event.keyCode === 27) {
       //****************************************지울것
       stopTyping();
+    } else {
+      const newUserQuotes = [...state.userQuotes];
+      newUserQuotes[state.inputIndex] = value;
+      setState(state => ({ ...state, currentValue: value, userQuotes: newUserQuotes }));
     }
   };
 
@@ -299,19 +310,19 @@ const PracticeContainer :React.FunctionComponent = () => {
     if (currentIndex < value.length) {
       if (value.length === 1) return;
       const comSpan = parentElement?.getElementsByClassName(
-        `c${compareIndex}`
+        `c${state.inputIndex}-${compareIndex}`
       )[0];
       isWrong(value, compareIndex, comSpan);
-      setState({ ...state, currentIndex: compareIndex + 1 });
+      setState(state => ({ ...state, currentIndex: compareIndex + 1 }));
     } else {
       const comSpan = parentElement?.getElementsByClassName(
-        `c${currentValue.length - 1}`
+        `c${state.inputIndex}-${compareIndex + 2}`
       )[0];
       deleteWrong(comSpan);
-      setState({
+      setState(state => ({
         ...state, 
         currentIndex: currentValue.length - 1,
-      });
+      }));
     }
   };
 
@@ -342,13 +353,11 @@ const PracticeContainer :React.FunctionComponent = () => {
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    setState({ ...state, loader: true });
+    setState(state => ({ ...state, loader: true }));
     const { currentTarget } = event;
     const name = currentTarget.getElementsByTagName("input")[0].value;
     createRecord(name);
   };
-
-
 
 
   return (
@@ -361,8 +370,8 @@ const PracticeContainer :React.FunctionComponent = () => {
     result={state.result}
     displayQuotes={state.displayQuotes}
     userQuotes={state.userQuotes}
-    refs={state.refs}
     inputEl={inputEl}
+    inputIndex={state.inputIndex}
     time={state.time}
     modal={state.modal}
     keyDownHandler={keyDownHandler}

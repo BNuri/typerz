@@ -35,8 +35,8 @@ interface IPractice {
   result: { title: string; writer: string; quote: string[] };
   displayQuotes: string[];
   userQuotes: string[];
-  refs: HTMLInputElement[];
   inputEl: React.RefObject<HTMLInputElement>;
+  inputIndex: number;
   modal: boolean;
   loading: boolean;
   loader: boolean;
@@ -57,8 +57,8 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
   result,
   displayQuotes,
   userQuotes,
-  refs,
   inputEl,
+  inputIndex,
   modal,
   loading,
   loader,
@@ -86,8 +86,8 @@ const PracticePresenter: React.FunctionComponent<IPractice> = ({
           time={time}
           displayQuotes={displayQuotes}
           userQuotes={userQuotes}
-          refs={refs}
           inputEl={inputEl}
+          inputIndex={inputIndex}
           keyDownHandler={keyDownHandler}
           keyUpHandler={keyUpHandler}
           changeHandler={changeHandler}
