@@ -135,6 +135,7 @@ const PracticeContainer :React.FunctionComponent = () => {
 
   useEffect(() => {
     sliceCurrentQuotes();
+    // eslint-disable-next-line
   }, [state.result]);
 
   useEffect(() => {
