@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import Timer from "./Timer";
 import Speed from "./Speed";
 import Accuracy from "./Accuracy";
@@ -52,14 +52,25 @@ const ComSpan = styled.span`
   }
 `;
 
+const blinkCursor = keyframes`
+    0% {
+    }
+    50% {
+        background-color: black;
+        color: white;
+    }
+    100% {
+    }
+`;
 
 const UserSpan = styled.span`
   position: absolute;
   bottom: -15px;
   left: 0;
+  height: 20px;
+  width: 20px;
   &.current { 
-    background-color: black;
-    color: white;
+    animation: ${blinkCursor} 1s infinite;
   }
 `;
 
@@ -80,6 +91,7 @@ interface IProp {
   userQuotes: string[];
   inputEl: React.RefObject<HTMLInputElement>;
   inputIndex: number;
+  currentIndex: number;
   keyDownHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   keyUpHandler: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -96,56 +108,61 @@ const Practice: React.FunctionComponent<IProp> = ({
   userQuotes,
   inputEl,
   inputIndex,
+  currentIndex,
   keyDownHandler,
   keyUpHandler,
   changeHandler,
-}) => (
-  <Container>
-    <NumberContainer>
-      <Timer time={time} isTest={isTest} />
-      <Speed
-        isTest={isTest}
-        time={time}
-        typeCnt={typeCnt}
-        typeWrong={typeWrong}
-      />
-      <Accuracy typeCnt={typeCnt} typeWrong={typeWrong} />
-    </NumberContainer>
-    <Quotes>
-      {displayQuotes.map((q, index) => (
-          <Quote key={`cq${index}`}>
-            {q && q.length > 0 ? (
-              q
-                .split("")
-                .map((word, i) => (
-                  <Char>
-                    <ComSpan className={`c${index}-${i}`}>{word}</ComSpan>
-                    <UserSpan className={`u${index}-${i}`}>{userQuotes[index] && userQuotes[index][i] && userQuotes[index][i]}</UserSpan>
-                  </Char>
-                ))
-            ) : (
-              <ComSpan>↵</ComSpan>
-            )}
-          </Quote>
-      ))}
-    </Quotes>
-    <Page>
-      {pageNum} / {pageTotal}
-    </Page>
-    <Input2 
-      type="text" 
-      maxLength={displayQuotes[inputIndex]?.length}
-      onKeyDown={keyDownHandler}
-      onKeyUp={keyUpHandler}
-      onChange={changeHandler}
-      onPaste={(event) => {
-        event.preventDefault();
-      }}
-      autoFocus={true}
-      spellCheck="false"
-      ref={inputEl}
-      />
-  </Container>
-);
+}) => {
+    console.log(`${inputIndex}=${currentIndex}`);
+  return(
+      <Container>
+        <NumberContainer>
+          <Timer time={time} isTest={isTest}/>
+          <Speed
+              isTest={isTest}
+              time={time}
+              typeCnt={typeCnt}
+              typeWrong={typeWrong}
+          />
+          <Accuracy typeCnt={typeCnt} typeWrong={typeWrong}/>
+        </NumberContainer>
+        <Quotes>
+          {displayQuotes.map((q, index) => (
+              <Quote key={`cq${index}`}>
+                {q && q.length > 0 ? (
+                    q
+                        .split("")
+                        .map((word, i) => (
+                            <Char>
+                              <ComSpan className={`c${index}-${i}`}>{word}</ComSpan>
+                              <UserSpan
+                                  className={`u${index}-${i} ${`${index}-${i}` === `${inputIndex}-${currentIndex}` ? 'current' : ''}`}>{userQuotes[index] && userQuotes[index][i] && userQuotes[index][i]}</UserSpan>
+                            </Char>
+                        ))
+                ) : (
+                    <ComSpan>↵</ComSpan>
+                )}
+              </Quote>
+          ))}
+        </Quotes>
+        <Page>
+          {pageNum} / {pageTotal}
+        </Page>
+        <Input2
+            type="text"
+            maxLength={displayQuotes[inputIndex]?.length}
+            onKeyDown={keyDownHandler}
+            onKeyUp={keyUpHandler}
+            onChange={changeHandler}
+            onPaste={(event) => {
+              event.preventDefault();
+            }}
+            autoFocus={true}
+            spellCheck="false"
+            ref={inputEl}
+        />
+      </Container>
+  )
+};
 
 export default Practice;

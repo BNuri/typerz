@@ -372,6 +372,7 @@ const PracticeContainer :React.FunctionComponent = () => {
     displayQuotes={state.displayQuotes}
     userQuotes={state.userQuotes}
     inputEl={inputEl}
+    currentIndex={state.currentIndex}
     inputIndex={state.inputIndex}
     time={state.time}
     modal={state.modal}
